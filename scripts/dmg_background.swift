@@ -2,6 +2,7 @@ import AppKit
 
 let output = URL(fileURLWithPath: CommandLine.arguments[1])
 let notarized = CommandLine.arguments.contains("--notarized")
+let adHoc = CommandLine.arguments.contains("--ad-hoc")
 try FileManager.default.createDirectory(at: output, withIntermediateDirectories: true)
 let width: CGFloat = 840, height: CGFloat = 640
 func rgb(_ r: CGFloat, _ g: CGFloat, _ b: CGFloat) -> NSColor {
@@ -69,14 +70,19 @@ func render(scale: Int) throws {
         text("3. Drag a spare file or window toward your notch.", x: 66, y: 471, w: 708, size: 14)
     } else {
         text("One extra step for this early build", x: 66, y: 363, w: 708, size: 17, weight: .semibold)
-        text("This app isn’t notarized by Apple, so macOS will show a warning.",
+        text(adHoc ? "This interim build has an ad hoc signature and is not notarized by Apple."
+             : "This app isn’t notarized by Apple, so macOS will show a warning.",
              x: 66, y: 395, w: 708, size: 13, color: secondary)
         text("1. Open the app once, then dismiss the warning.", x: 66, y: 430, w: 708, size: 14)
         text("2. System Settings → Privacy & Security → Open Anyway.", x: 66, y: 461, w: 708, size: 14, weight: .medium)
         text("3. Authenticate and confirm Open.", x: 66, y: 492, w: 708, size: 14)
     }
-    text("Allow Accessibility and Screen Recording when asked. Settings are in the hand menu-bar icon.",
-         x: 36, y: 577, w: 768, size: 12, color: secondary, alignment: .center)
+    text("Allow Accessibility and Screen Recording. Click the Dock icon to reopen Settings.",
+         x: 36, y: 568, w: 768, size: 12, color: secondary, alignment: .center)
+    if adHoc {
+        text("After an update, you may need to remove and re-add the app in both permission lists.",
+             x: 36, y: 589, w: 768, size: 11, color: secondary, alignment: .center)
+    }
     text("macOS 15+  ·  Apple silicon  ·  Files go to Trash. Windows get closed.",
          x: 40, y: 612, w: 760, size: 11, color: secondary, alignment: .center)
     let name = scale == 1 ? "installer.png" : "installer@2x.png"

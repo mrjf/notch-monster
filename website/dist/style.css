@@ -16,3 +16,4 @@
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
 
 .dock-decoration{cursor:default;pointer-events:none}@media(max-width:700px){.dock-decoration{display:none}}
+.site-copy .setup-link{display:inline-flex;align-items:center;min-height:32px;font-size:11px;text-decoration:underline;text-underline-offset:3px}

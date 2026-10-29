@@ -3,6 +3,7 @@ set -euo pipefail
 
 repo_dir="${0:A:h:h}"
 preview="${NOTCH_MONSTER_LOCAL_PREVIEW:-0}"
+allow_ad_hoc_release="${NOTCH_MONSTER_ALLOW_AD_HOC_RELEASE:-0}"
 app_name="Notch Monster"
 if [[ "$preview" == "1" ]]; then
     app_name="Notch Monster Preview"
@@ -20,9 +21,12 @@ if [[ "$preview" == "1" ]]; then
         exit 1
     fi
     signing_identity="${signing_identity:--}"
-elif [[ "$signing_identity" == "-" ]]; then
-    echo "Release builds require a certificate-backed signing identity. Use NOTCH_MONSTER_LOCAL_PREVIEW=1 for an isolated local preview." >&2
+elif [[ "$signing_identity" == "-" && "$allow_ad_hoc_release" != "1" ]]; then
+    echo "Release builds require a certificate-backed signing identity. Use NOTCH_MONSTER_LOCAL_PREVIEW=1 for an isolated local preview, or explicitly set NOTCH_MONSTER_ALLOW_AD_HOC_RELEASE=1 for an unnotarized interim release." >&2
     exit 1
+fi
+if [[ -z "$signing_identity" && "$allow_ad_hoc_release" == "1" ]]; then
+    signing_identity="-"
 fi
 if [[ -z "$signing_identity" ]]; then
     identities="$(security find-identity -v -p codesigning)"
@@ -66,7 +70,9 @@ codesign --force --deep --timestamp --options runtime --entitlements "$repo_dir/
 codesign --verify --deep --strict "$staged_app"
 if [[ "$preview" != "1" ]]; then
     signature="$(codesign -dv --verbose=4 "$staged_app" 2>&1)"
-    if [[ "$signature" != *"Authority=Apple Development:"* && "$signature" != *"Authority=Developer ID Application:"* ]]; then
+    if [[ "$signature" == *"Signature=adhoc"* && "$allow_ad_hoc_release" == "1" ]]; then
+        echo "Interim release: ad hoc signed and not notarized. Users may need to grant permissions again after updating." >&2
+    elif [[ "$signature" != *"Authority=Apple Development:"* && "$signature" != *"Authority=Developer ID Application:"* ]]; then
         echo "Release builds require an Apple Development or Developer ID Application certificate." >&2
         exit 1
     fi

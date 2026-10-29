@@ -12,10 +12,14 @@ This repository contains both the native app and the Snow Leopard-style website.
 - `scripts/` — icon, sound, signing, ZIP, and DMG build tools.
 - `Tests/` and `website/tests/` — app and browser interaction tests.
 
-The download requires macOS 15 or later on Apple silicon. Open the DMG and drag
-Notch Monster to Applications. This early build is not notarized: after the first
-blocked launch, use **System Settings → Privacy & Security → Open Anyway**.
-The installer includes these instructions.
+The download requires macOS 15 or later on Apple silicon. Version 0.1.12 is an
+interim, ad hoc-signed build without Apple notarization. Quit the older app, open
+the DMG, and drag Notch Monster to Applications. After the first blocked launch,
+use **System Settings → Privacy & Security → Open Anyway**. Open the copy in
+Applications, enable both window permissions in its Settings, and quit and reopen
+when macOS asks. Settings is always available from the Dock or by reopening the app.
+See the [installation and permission guide](https://notchmonster.com/setup.html)
+if a permission is already enabled but the app cannot use it.
 
 ## Run it
 
@@ -32,7 +36,7 @@ The packaging script selects an installed Apple Development identity by default.
 NOTCH_MONSTER_SIGNING_IDENTITY="Apple Development: Your Name (TEAMID)" scripts/package_app.sh
 ```
 
-Use the same signing identity across builds so macOS can retain the app's permission grants. Release packaging refuses ad hoc signatures, and the ZIP/DMG exporters also require an Apple signing certificate.
+Use the same signing identity across builds so macOS can retain the app's permission grants. Release packaging and the ZIP/DMG exporters require an Apple signing certificate by default. The interim-release override below explicitly allows ad hoc distribution while Developer ID signing is being set up.
 
 For a local build without a signing certificate:
 
@@ -61,11 +65,23 @@ Window feeding requires **Accessibility** permission to control the window and *
 
 A temporary capture failure does not mean permission was revoked. Settings distinguishes denied access from an unfinished check. Once capture has succeeded, temporary failures allow another grab; a successful retry clears the error. Only an explicit ScreenCaptureKit permission denial asks you to repair the Screen Recording grant.
 
+If an enabled permission still reports denied after updating, quit Notch Monster. In the affected **System Settings → Privacy & Security** pane, remove its old entry with **−**, then use **+** to add **/Applications/Notch Monster.app** and enable it again. Reopen the app and use **Retry capture check**. Do the same for Accessibility if that permission is also unavailable. Ad hoc signing identifies a particular binary, so a rebuilt app can need fresh grants even when the old entry is still enabled.
+
 If an application refuses to close or asks for confirmation, the window remains open. Reduced motion uses a short fade.
 
 ## Public distribution
 
-The current download is development signed and not notarized. A paid Apple Developer Program membership, a **Developer ID Application** certificate with its private key, and notarization credentials are required to remove the unverified-developer Gatekeeper warning. The existing Apple Development certificate cannot replace Developer ID distribution signing.
+The current 0.1.12 download is ad hoc signed and not notarized. It works after the user approves the first launch and grants Accessibility and Screen Recording, but updates can require granting those permissions again. Build this interim release explicitly:
+
+```sh
+NOTCH_MONSTER_ALLOW_AD_HOC_RELEASE=1 scripts/package_app.sh
+NOTCH_MONSTER_ALLOW_AD_HOC_RELEASE=1 python3 scripts/package_download.py
+NOTCH_MONSTER_ALLOW_AD_HOC_RELEASE=1 python3 scripts/package_dmg.py
+```
+
+The override does not apply to the isolated Preview app, which cannot be exported. Keep the resulting binary unchanged once published so its permission identity stays consistent for that version.
+
+A paid Apple Developer Program membership, a **Developer ID Application** certificate with its private key, and notarization credentials are required to remove the unverified-developer Gatekeeper warning. The existing Apple Development certificate cannot replace Developer ID distribution signing.
 
 Once those are available, store the notarization credentials in a Keychain profile using `xcrun notarytool store-credentials`, then package with:
 

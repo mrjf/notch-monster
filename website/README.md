@@ -10,7 +10,9 @@ Move an empty pointer just below the notch's center for a short wave. Settings a
 
 Preview from this directory: `python3 -m http.server 4173 --bind 127.0.0.1 --directory dist`.
 
-Deploy from this directory: `wrangler deploy` with the authenticated Cloudflare account. Keep `dist/assets/Notch-Monster-0.1.12.dmg` current with the packaged native app. The DMG opens a styled drag-to-Applications window with first-launch security instructions. The app inside is development signed, not notarized.
+Deploy from this directory: `wrangler deploy` with the authenticated Cloudflare account. Package the native app, ZIP, and DMG before deploying; Git excludes the installers. The main and Dock download links target `dist/assets/Notch-Monster-0.1.12.dmg`. Version 0.1.12 is an interim ad hoc-signed build, not notarized. Its packaging requires the explicit `NOTCH_MONSTER_ALLOW_AD_HOC_RELEASE=1` override documented in the root README. Keep the published binary unchanged within a version because ad hoc permission grants depend on that binary.
+
+The DMG opens a styled drag-to-Applications window with first-launch security instructions. The visible **Installation & permissions** link opens `setup.html`, which explains Open Anyway, Settings access from the Dock, both window permissions, restart/recheck, and removing a stale grant after an update. Keep its labels aligned with the native app.
 
 Wallpaper and historical icon provenance is in `ASSET-SOURCES.md`. The demo accepts only its own pretend items; it never reads or deletes real dropped files. Safari's title bar and the three files support pointer dragging and keyboard Enter. Dock Safari restores the window; Trash restores pretend files; Reset Desktop restores everything.
 
