@@ -1,6 +1,6 @@
 # Notch Monster
 
-[Website & interactive demo](https://notchmonster.com/) · [Download for Mac](https://notchmonster.com/assets/Notch-Monster-0.1.11.dmg)
+[Website & interactive demo](https://notchmonster.com/) · [Download for Mac](https://notchmonster.com/assets/Notch-Monster-0.1.12.dmg)
 
 A native macOS creature that lives in the display notch and eats clutter. It stays invisible until triggered; then a stiff, fuzzy purple puppet arm snaps straight to the cursor. The palm and forearm stay rigid while the fingers curl around the item.
 
@@ -58,6 +58,8 @@ This creates **Notch Monster Preview** with bundle identifier `com.notchmonster.
 Settings opens when the app launches. Return to it by clicking Notch Monster in the Dock or reopening it from Applications, even when its menu-bar icon is hidden.
 
 Window feeding requires **Accessibility** permission to control the window and **Screen Recording** permission to capture its image. The checklist at the top of Settings shows which permissions are missing, with an Enable button for each System Settings pane. Enable Notch Monster in both panes; if macOS asks you to quit and reopen the app, do so. On every launch, the app checks Accessibility and verifies ScreenCaptureKit by taking and discarding a single-pixel capture. The checklist reports the actual capture error if a grant is stale or unusable; use Check permissions again after changing permissions. Until both checks pass, window grabbing stays off; file drops still work. No Automation or System Events permission is needed.
+
+A temporary capture failure does not mean permission was revoked. Settings distinguishes denied access from an unfinished check. Once capture has succeeded, temporary failures allow another grab; a successful retry clears the error. Only an explicit ScreenCaptureKit permission denial asks you to repair the Screen Recording grant.
 
 If an application refuses to close or asks for confirmation, the window remains open. Reduced motion uses a short fade.
 

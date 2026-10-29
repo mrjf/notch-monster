@@ -264,6 +264,7 @@ final class WindowDragWatcher {
         AXUIElementGetPid(window, &pid)
         do {
             let snapshot = try await WindowSnapshot.capture(pid: pid, bounds: CGRect(origin: origin, size: originalSize), title: attribute(window, kAXTitleAttribute) as? String)
+            permissions.captureSucceeded()
             logger.notice("SNAPSHOT captured pid=\(pid)")
             let frame = CGRect(x: origin.x, y: primaryTop - origin.y - originalSize.height, width: originalSize.width, height: originalSize.height)
             let ownerPID = pid

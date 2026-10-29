@@ -6,8 +6,13 @@ import ScreenCaptureKit
 @MainActor
 @Observable
 final class WindowPermissions {
+    enum ScreenRecordingAccess {
+        case unverified, granted, denied
+    }
+
     private(set) var accessibilityGranted = false
-    private(set) var screenRecordingGranted = false
+    private(set) var screenRecordingAccess = ScreenRecordingAccess.unverified
+    var screenRecordingGranted: Bool { screenRecordingAccess == .granted }
     private(set) var checking = false
     private(set) var captureError: String?
     var ready: Bool { accessibilityGranted && screenRecordingGranted }
@@ -33,8 +38,7 @@ final class WindowPermissions {
         refreshAccessibility()
         do {
             try await probeCapture()
-            screenRecordingGranted = true
-            captureError = nil
+            captureSucceeded()
         } catch {
             captureFailed(error)
         }
@@ -42,9 +46,18 @@ final class WindowPermissions {
         logger.notice("CHECK accessibility=\(self.accessibilityGranted) capture=\(self.screenRecordingGranted)")
     }
 
+    func captureSucceeded() {
+        screenRecordingAccess = .granted
+        captureError = nil
+    }
+
     func captureFailed(_ error: Error) {
-        screenRecordingGranted = false
         let error = error as NSError
+        if error.domain == SCStreamErrorDomain && error.code == SCStreamError.Code.userDeclined.rawValue {
+            screenRecordingAccess = .denied
+        } else if !screenRecordingGranted {
+            screenRecordingAccess = .unverified
+        }
         captureError = "\(error.localizedDescription) (\(error.domain), \(error.code))"
         logger.error("CAPTURE unavailable: \(self.captureError ?? "", privacy: .public)")
     }
