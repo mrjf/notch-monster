@@ -1,0 +1,584 @@
+{
+  "generator": "Earshot 0.4.0 procedural bank + Notch Monster mixes",
+  "earshot_commit": "591fa3e028032e6dce56620a20e932e35667e8d8",
+  "sample_rate": 48000,
+  "sounds": {
+    "fuzzy-reach": {
+      "recipe": [
+        [
+          "swish/soft",
+          0.09,
+          0,
+          1,
+          {
+            "apex": 0.025
+          }
+        ]
+      ],
+      "duration_s": 0.098,
+      "peak_dbfs": -20.998367559723366,
+      "sha256": "6667d19a40865b654abda3ca87fac5d9c00e97a898407142c28bd9783d50d859",
+      "audit": {
+        "ok": true,
+        "warnings": [],
+        "notes": [],
+        "summary": "sound: clean",
+        "measures": {
+          "clicks": 0,
+          "edge_db": -240.0,
+          "clip_runs": 0,
+          "overs": 0,
+          "dc_db": -75.4,
+          "ring_z": null,
+          "trunc_db": null,
+          "silence_ms": 0.0,
+          "bump_db": 0.0,
+          "attack_ms": 4.25,
+          "t40_ms": 70.0,
+          "crest_db": 13.1,
+          "res_db": 7.0,
+          "res_hz": 3644,
+          "peak_dbfs": -21.0,
+          "live_ms": 66.75
+        },
+        "glide": {
+          "tonal_share": 0.23,
+          "rise_st": 0.0,
+          "from_s": null,
+          "to_s": null
+        },
+        "layers": {
+          "attacks": [
+            0.028
+          ],
+          "count": 1,
+          "pre_swell_ms": 0.0
+        },
+        "context": {}
+      }
+    },
+    "fuzzy-file": {
+      "recipe": [
+        [
+          "whoosh_fast/sleeve",
+          0.18,
+          0,
+          1,
+          {
+            "apex": 0.045
+          }
+        ],
+        [
+          "ui_pop/boop",
+          0.14,
+          0.025,
+          0.48,
+          {
+            "pitch": 350
+          }
+        ]
+      ],
+      "duration_s": 0.188,
+      "peak_dbfs": -13.998771951939075,
+      "sha256": "e96aa2ae6d72d4edbe5534c9b34a40f57cf545ac7c79dbe210b88847fcde31a2",
+      "audit": {
+        "ok": true,
+        "warnings": [],
+        "notes": [],
+        "summary": "sound: clean",
+        "measures": {
+          "clicks": 0,
+          "edge_db": -240.0,
+          "clip_runs": 0,
+          "overs": 0,
+          "dc_db": -84.6,
+          "ring_z": 4.3,
+          "trunc_db": null,
+          "silence_ms": 0.0,
+          "bump_db": 0.0,
+          "attack_ms": 1.0,
+          "t40_ms": 120.0,
+          "crest_db": 13.6,
+          "res_db": 7.1,
+          "res_hz": 1532,
+          "peak_dbfs": -14.0,
+          "live_ms": 133.5
+        },
+        "glide": {
+          "tonal_share": 0.54,
+          "rise_st": 0.0,
+          "from_s": null,
+          "to_s": null
+        },
+        "layers": {
+          "attacks": [
+            0.048
+          ],
+          "count": 1,
+          "pre_swell_ms": 20.0
+        },
+        "context": {}
+      }
+    },
+    "fuzzy-window": {
+      "recipe": [
+        [
+          "whoosh_fast/sleeve",
+          0.24,
+          0,
+          0.8,
+          {
+            "apex": 0.06
+          }
+        ],
+        [
+          "swipe/paper",
+          0.21,
+          0,
+          0.65,
+          {
+            "apex": 0.05
+          }
+        ],
+        [
+          "knock/wood",
+          0.1,
+          0.045,
+          0.26,
+          {}
+        ],
+        [
+          "knock/plastic",
+          0.1,
+          0.1,
+          0.15,
+          {}
+        ]
+      ],
+      "duration_s": 0.248,
+      "peak_dbfs": -13.998771951939075,
+      "sha256": "9982d4b458732597d5627264f796e84e6577a51cefb96ffa62d6e21e7783daa3",
+      "audit": {
+        "ok": true,
+        "warnings": [],
+        "notes": [],
+        "summary": "sound: clean",
+        "measures": {
+          "clicks": 0,
+          "edge_db": -240.0,
+          "clip_runs": 0,
+          "overs": 0,
+          "dc_db": -83.2,
+          "ring_z": 5.5,
+          "trunc_db": null,
+          "silence_ms": 0.0,
+          "bump_db": 5.9,
+          "attack_ms": 5.75,
+          "t40_ms": 150.0,
+          "crest_db": 12.2,
+          "res_db": 4.4,
+          "res_hz": 6781,
+          "peak_dbfs": -14.0,
+          "live_ms": 169.0
+        },
+        "glide": {
+          "tonal_share": 0.21,
+          "rise_st": 0.0,
+          "from_s": null,
+          "to_s": null
+        },
+        "layers": {
+          "attacks": [
+            0.058
+          ],
+          "count": 1,
+          "pre_swell_ms": 15.0
+        },
+        "context": {}
+      }
+    },
+    "rubber-reach": {
+      "recipe": [
+        [
+          "ui_pop/soft",
+          0.1,
+          0,
+          1,
+          {
+            "pitch": 630
+          }
+        ]
+      ],
+      "duration_s": 0.108,
+      "peak_dbfs": -20.998367559723366,
+      "sha256": "cbcba74b1f4c7c04eb90e5f8835f8ded30a434b1e553352bff081028ce178db5",
+      "audit": {
+        "ok": true,
+        "warnings": [],
+        "notes": [],
+        "summary": "sound: clean",
+        "measures": {
+          "clicks": 0,
+          "edge_db": -240.0,
+          "clip_runs": 0,
+          "overs": 0,
+          "dc_db": -74.2,
+          "ring_z": null,
+          "trunc_db": null,
+          "silence_ms": 0.0,
+          "bump_db": 0.0,
+          "attack_ms": 8.5,
+          "t40_ms": 70.0,
+          "crest_db": 8.4,
+          "res_db": 23.2,
+          "res_hz": 1903,
+          "peak_dbfs": -21.0,
+          "live_ms": 85.0
+        },
+        "glide": {
+          "tonal_share": 0.25,
+          "rise_st": 0.0,
+          "from_s": null,
+          "to_s": null
+        },
+        "layers": {
+          "attacks": [
+            0.033
+          ],
+          "count": 1,
+          "pre_swell_ms": 0.0
+        },
+        "context": {}
+      }
+    },
+    "rubber-file": {
+      "recipe": [
+        [
+          "ui_pop/fall",
+          0.18,
+          0,
+          1,
+          {
+            "pitch": 420
+          }
+        ],
+        [
+          "swish/soft",
+          0.17,
+          0,
+          0.38,
+          {
+            "apex": 0.035
+          }
+        ]
+      ],
+      "duration_s": 0.188,
+      "peak_dbfs": -13.998771951939075,
+      "sha256": "f4deb640ab0189b8aee6ed472dd17cd132ddb6afb7a837092806b7e62cb51d8a",
+      "audit": {
+        "ok": true,
+        "warnings": [],
+        "notes": [],
+        "summary": "sound: clean",
+        "measures": {
+          "clicks": 0,
+          "edge_db": -240.0,
+          "clip_runs": 0,
+          "overs": 0,
+          "dc_db": -80.1,
+          "ring_z": 5.7,
+          "trunc_db": null,
+          "silence_ms": 0.0,
+          "bump_db": 0.6,
+          "attack_ms": 5.75,
+          "t40_ms": 140.0,
+          "crest_db": 10.3,
+          "res_db": 16.8,
+          "res_hz": 2577,
+          "peak_dbfs": -14.0,
+          "live_ms": 145.75
+        },
+        "glide": {
+          "tonal_share": 0.24,
+          "rise_st": 0.0,
+          "from_s": null,
+          "to_s": null
+        },
+        "layers": {
+          "attacks": [
+            0.028
+          ],
+          "count": 1,
+          "pre_swell_ms": 0.0
+        },
+        "context": {}
+      }
+    },
+    "rubber-window": {
+      "recipe": [
+        [
+          "ui_pop/fall",
+          0.19,
+          0,
+          1,
+          {
+            "pitch": 350
+          }
+        ],
+        [
+          "ui_pop/boop",
+          0.17,
+          0.075,
+          0.48,
+          {
+            "pitch": 260
+          }
+        ],
+        [
+          "swish/soft",
+          0.24,
+          0,
+          0.35,
+          {
+            "apex": 0.055
+          }
+        ]
+      ],
+      "duration_s": 0.253,
+      "peak_dbfs": -14.000100374307355,
+      "sha256": "275ffdc1ece3475884036d7a5d423c3e1f267fed9d4519070c29deb1f27eab60",
+      "audit": {
+        "ok": true,
+        "warnings": [],
+        "notes": [
+          {
+            "code": "tail",
+            "msg": "the tail rises again by 12 dB (a second event, a roll or a double member)"
+          }
+        ],
+        "summary": "sound: clean (the tail rises again by 12 dB (a second event, a roll or a double member))",
+        "measures": {
+          "clicks": 0,
+          "edge_db": -240.0,
+          "clip_runs": 0,
+          "overs": 0,
+          "dc_db": -80.8,
+          "ring_z": 4.1,
+          "trunc_db": null,
+          "silence_ms": 0.0,
+          "bump_db": 11.6,
+          "attack_ms": 10.5,
+          "t40_ms": 180.0,
+          "crest_db": 10.8,
+          "res_db": 17.1,
+          "res_hz": 2016,
+          "peak_dbfs": -14.0,
+          "live_ms": 183.25
+        },
+        "glide": {
+          "tonal_share": 0.7,
+          "rise_st": 0.0,
+          "from_s": null,
+          "to_s": null
+        },
+        "layers": {
+          "attacks": [
+            0.028,
+            0.107
+          ],
+          "count": 2,
+          "pre_swell_ms": 0.0
+        },
+        "context": {}
+      }
+    },
+    "arcade-reach": {
+      "recipe": [
+        [
+          "ui_pop/blip",
+          0.075,
+          0,
+          1,
+          {
+            "pitch": 1000
+          }
+        ]
+      ],
+      "duration_s": 0.083,
+      "peak_dbfs": -21.001341670225994,
+      "sha256": "402bea39554b8f484962427a60eca4486b737e63ddd015acb14277bcebdfff35",
+      "audit": {
+        "ok": true,
+        "warnings": [],
+        "notes": [],
+        "summary": "sound: clean",
+        "measures": {
+          "clicks": 0,
+          "edge_db": -240.0,
+          "clip_runs": 0,
+          "overs": 0,
+          "dc_db": -74.2,
+          "ring_z": null,
+          "trunc_db": null,
+          "silence_ms": 0.0,
+          "bump_db": 0.0,
+          "attack_ms": 7.0,
+          "t40_ms": 40.0,
+          "crest_db": 10.8,
+          "res_db": 37.8,
+          "res_hz": 3644,
+          "peak_dbfs": -21.0,
+          "live_ms": 36.5
+        },
+        "glide": {
+          "tonal_share": 1.0,
+          "rise_st": 0.3,
+          "from_s": 0.011,
+          "to_s": 0.036
+        },
+        "layers": {
+          "attacks": [
+            0.018
+          ],
+          "count": 1,
+          "pre_swell_ms": 0.0
+        },
+        "context": {}
+      }
+    },
+    "arcade-file": {
+      "recipe": [
+        [
+          "pro_zip/down",
+          0.19,
+          0,
+          0.8,
+          {}
+        ],
+        [
+          "ui_pop/blip",
+          0.09,
+          0.015,
+          0.35,
+          {
+            "pitch": 440
+          }
+        ]
+      ],
+      "duration_s": 0.198,
+      "peak_dbfs": -13.998771951939075,
+      "sha256": "d0abfd11efbca3bb0f3954fb07627f0cf12d63c181662c6cc977935da0beb0ce",
+      "audit": {
+        "ok": true,
+        "warnings": [],
+        "notes": [],
+        "summary": "sound: clean",
+        "measures": {
+          "clicks": 0,
+          "edge_db": -240.0,
+          "clip_runs": 0,
+          "overs": 0,
+          "dc_db": -82.6,
+          "ring_z": 10.0,
+          "trunc_db": null,
+          "silence_ms": 0.0,
+          "bump_db": 0.0,
+          "attack_ms": 4.5,
+          "t40_ms": 100.0,
+          "crest_db": 10.1,
+          "res_db": 10.3,
+          "res_hz": 1600,
+          "peak_dbfs": -14.0,
+          "live_ms": 79.25
+        },
+        "glide": {
+          "tonal_share": 0.64,
+          "rise_st": 0.5,
+          "from_s": 0.021,
+          "to_s": 0.041
+        },
+        "layers": {
+          "attacks": [
+            0.013
+          ],
+          "count": 1,
+          "pre_swell_ms": 0.0
+        },
+        "context": {}
+      }
+    },
+    "arcade-window": {
+      "recipe": [
+        [
+          "pro_zip/down_warm",
+          0.25,
+          0,
+          0.8,
+          {}
+        ],
+        [
+          "glitch/chirp",
+          0.18,
+          0,
+          0.5,
+          {}
+        ],
+        [
+          "ui_pop/boop",
+          0.14,
+          0.08,
+          0.3,
+          {
+            "pitch": 330
+          }
+        ]
+      ],
+      "duration_s": 0.258,
+      "peak_dbfs": -14.000100374307355,
+      "sha256": "bea3dfbefc548fc9268169a3b671342ab593cf14fa6f66a115af84490ac7a8fd",
+      "audit": {
+        "ok": true,
+        "warnings": [],
+        "notes": [
+          {
+            "code": "tail",
+            "msg": "the tail rises again by 16 dB (a second event, a roll or a double member)"
+          }
+        ],
+        "summary": "sound: clean (the tail rises again by 16 dB (a second event, a roll or a double member))",
+        "measures": {
+          "clicks": 0,
+          "edge_db": -240.0,
+          "clip_runs": 0,
+          "overs": 0,
+          "dc_db": -82.2,
+          "ring_z": 4.9,
+          "trunc_db": null,
+          "silence_ms": 0.0,
+          "bump_db": 15.5,
+          "attack_ms": 7.0,
+          "t40_ms": 180.0,
+          "crest_db": 8.9,
+          "res_db": 14.9,
+          "res_hz": 5539,
+          "peak_dbfs": -14.0,
+          "live_ms": 168.75
+        },
+        "glide": {
+          "tonal_share": 0.61,
+          "rise_st": 0.0,
+          "from_s": null,
+          "to_s": null
+        },
+        "layers": {
+          "attacks": [
+            0.018
+          ],
+          "count": 1,
+          "pre_swell_ms": 0.0
+        },
+        "context": {}
+      }
+    }
+  }
+}

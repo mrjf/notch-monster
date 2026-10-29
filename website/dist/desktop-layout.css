@@ -1,0 +1,30 @@
+/* Home positions exist before the interaction module loads. Moving an item
+   removes at-home and replaces these rules with explicit desktop coordinates. */
+.desktop {
+  --window-home-top: var(--menu-bar-height);
+  --window-home-bottom: 72px;
+}
+.demo-window.at-home {
+  inset: var(--window-home-top) 0 var(--window-home-bottom);
+  height: fit-content;
+  margin: auto;
+}
+.fake-file { --file-index: 0; }
+#demo-photo { --file-index: 1; }
+#demo-folder { --file-index: 2; }
+.fake-file.at-home {
+  right: 22px;
+  top: calc(52px + var(--file-index) * 110px);
+}
+@media (max-width: 700px) {
+  .desktop { --window-home-top: 104px; --window-home-bottom: 61px; }
+  .fake-file.at-home {
+    top: 34px;
+    right: auto;
+    left: calc((var(--file-index) + .5) * 100% / 3);
+    margin-left: -46px;
+  }
+}
+@media (max-height: 620px) and (min-width: 701px) {
+  .desktop { --window-home-bottom: 57px; }
+}

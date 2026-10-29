@@ -1,0 +1,20 @@
+{
+  "$schema": "https://www.raycast.com/schemas/extension.json",
+  "name": "notch-monster",
+  "title": "Notch Monster",
+  "description": "Choose what to do with files caught by Notch Monster.",
+  "icon": "icon.png",
+  "author": "notchmonster",
+  "categories": ["Productivity"],
+  "license": "MIT",
+  "commands": [{
+    "name": "file-actions",
+    "title": "Caught Files",
+    "subtitle": "Notch Monster",
+    "description": "Open, preview, or act on files sent from Notch Monster.",
+    "mode": "view"
+  }],
+  "dependencies": {"@raycast/api": "1.104.25"},
+  "devDependencies": {"@types/node": "22.19.0", "@types/react": "19.2.2", "typescript": "5.9.3"},
+  "scripts": {"build": "ray build -e dist", "dev": "ray develop", "typecheck": "tsc --noEmit"}
+}

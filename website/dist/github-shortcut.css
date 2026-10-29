@@ -1,0 +1,55 @@
+.github-shortcut {
+  position: absolute;
+  top: 52px;
+  left: 22px;
+  z-index: 8;
+  width: 104px;
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  color: white;
+  text-decoration: none;
+  -webkit-user-drag: none;
+}
+.github-shortcut > span {
+  padding: 2px 5px;
+  border-radius: 3px;
+  font-size: 11px;
+  line-height: 1.2;
+  text-shadow: 0 1px 2px #000, 1px 1px 3px #000;
+}
+.github-shortcut:is(:hover, :focus-visible) > span {
+  background: linear-gradient(#5083c7, #285a9a);
+}
+.github-shortcut:focus-visible { outline: none; }
+.github-shortcut:focus-visible .file-icon {
+  outline: 1px solid #ffffffa0;
+  outline-offset: 2px;
+  border-radius: 8px;
+  background: #ffffff26;
+}
+@media (max-width: 700px) {
+  /* Four real desktop columns leave the source shortcut visible on phones. */
+  .fake-file { width: 76px; }
+  .fake-file.at-home {
+    left: calc((var(--file-index) + .5) * 100% / 4);
+    margin-left: -38px;
+  }
+  .github-shortcut {
+    width: 76px;
+    top: 34px;
+    left: 87.5%;
+    margin-left: -38px;
+  }
+  .github-shortcut .file-icon { width: 44px; height: 44px; }
+  .github-shortcut > span { font-size: 10px; }
+}
+@media (max-height: 700px) and (max-width: 700px) {
+  .github-shortcut .file-icon { width: 39px; height: 39px; }
+}
+@media (max-height: 620px) and (min-width: 701px) {
+  .github-shortcut { top: 28px; }
+  .github-shortcut .file-icon { width: 44px; height: 44px; }
+}

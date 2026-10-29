@@ -1,0 +1,15 @@
+{
+  "$schema": "https://raw.githubusercontent.com/cloudflare/workers-sdk/main/packages/wrangler/config-schema.json",
+  "name": "notch-monster",
+  "account_id": "8ce2cffc47b8b76a6f1d67997bf196bf",
+  "compatibility_date": "2026-10-28",
+  "workers_dev": true,
+  "routes": [
+    { "pattern": "notchmonster.com", "custom_domain": true },
+    { "pattern": "www.notchmonster.com", "custom_domain": true }
+  ],
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "404-page"
+  }
+}

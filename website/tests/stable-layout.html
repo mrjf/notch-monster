@@ -1,0 +1,128 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Desktop first-paint regression</title>
+<style>
+  body { margin: 24px; font: 14px system-ui; color: #222; background: #eee; }
+  h1 { font-size: 20px; }
+  #result { font-weight: 700; }
+  #checks { line-height: 1.7; }
+  [data-passed="false"] { color: #b00020; }
+  iframe { display: block; border: 0; background: white; }
+  section { margin-top: 24px; }
+</style>
+<h1>Desktop layout before and after JavaScript</h1>
+<p id="result" role="status">Running…</p>
+<ol id="checks"></ol>
+<main id="cases"></main>
+<script type="module">
+// Serve website/ as the HTTP root and open /tests/stable-layout.html.
+// The actual page paints with its module withheld, then the unchanged entry
+// module is loaded. This catches CSS-to-JavaScript positioning jumps.
+const result = document.querySelector('#result');
+const checks = document.querySelector('#checks');
+const baseURL = new URL('../dist/', location.href);
+let total = 0, failed = 0;
+
+function check(condition, message, detail = '') {
+  total++;
+  if (!condition) failed++;
+  const line = document.createElement('li');
+  line.dataset.passed = String(condition);
+  line.textContent = `${condition ? 'PASS' : 'FAIL'} · ${message}${detail ? ` · ${detail}` : ''}`;
+  checks.append(line);
+}
+function snapshot(frame) {
+  return [...frame.contentDocument.querySelectorAll('.demo-item')].map(element => {
+    const {x, y, width, height} = element.getBoundingClientRect();
+    return {id: element.id, x, y, width, height};
+  });
+}
+function displacement(before, after) {
+  return Math.max(...before.flatMap((rect, index) =>
+    ['x', 'y', 'width', 'height'].map(key => Math.abs(rect[key] - after[index][key]))));
+}
+const paint = frame => new Promise(resolve => {
+  frame.contentWindow.requestAnimationFrame(() => frame.contentWindow.requestAnimationFrame(resolve));
+});
+function checkCentered(frame, label) {
+  const desktop = frame.contentDocument.querySelector('#desktop').getBoundingClientRect();
+  const window = frame.contentDocument.querySelector('#demo-browser').getBoundingClientRect();
+  const mobile = desktop.width <= 700;
+  const top = mobile ? 104 : 23;
+  const bottom = mobile ? 61 : desktop.height <= 620 ? 57 : 72;
+  const xError = Math.abs(window.x + window.width / 2 - (desktop.x + desktop.width / 2));
+  const yError = Math.abs(window.y + window.height / 2 - (desktop.y + (top + desktop.height - bottom) / 2));
+  check(xError <= .1 && yError <= .1, `${label}: centered in the usable desktop`,
+    `horizontal error ${xError.toFixed(3)} px; vertical error ${yError.toFixed(3)} px`);
+}
+
+try {
+  const response = await fetch(new URL('index.html', baseURL), {cache: 'no-store'});
+  if (!response.ok) throw new Error(`Page fetch returned HTTP ${response.status}`);
+  const source = new DOMParser().parseFromString(await response.text(), 'text/html');
+  const entry = source.querySelector('script[type="module"][src]');
+  if (!entry) throw new Error('Production module entry was not found');
+  const moduleURL = new URL(entry.getAttribute('src'), baseURL).href;
+  entry.remove();
+  const base = source.createElement('base');
+  base.href = baseURL.href;
+  source.head.prepend(base);
+  const page = `<!doctype html>\n${source.documentElement.outerHTML}`;
+
+  for (const scenario of [
+    {name: 'Desktop', width: 1186, height: 977, sizes: [[1500, 1050], [980, 800], [1186, 600]]},
+    {name: 'Mobile', width: 390, height: 667, sizes: [[430, 800], [390, 667]]}
+  ]) {
+    const section = document.createElement('section');
+    const heading = document.createElement('h2');
+    heading.textContent = scenario.name;
+    const frame = document.createElement('iframe');
+    frame.title = `${scenario.name} production desktop`;
+    frame.style.width = `${scenario.width}px`;
+    frame.style.height = `${scenario.height}px`;
+    section.append(heading, frame);
+    document.querySelector('#cases').append(section);
+    await new Promise(resolve => { frame.onload = resolve; frame.srcdoc = page; });
+    await paint(frame);
+    const initial = snapshot(frame);
+    checkCentered(frame, `${scenario.name}, CSS only`);
+
+    // Observe every rendered frame during module startup, not just its final
+    // position, to catch a temporary jump that later gets corrected.
+    let observing = true, largestShift = 0;
+    const observe = () => {
+      largestShift = Math.max(largestShift, displacement(initial, snapshot(frame)));
+      if (observing) frame.contentWindow.requestAnimationFrame(observe);
+    };
+    observe();
+    const module = frame.contentDocument.createElement('script');
+    module.type = 'module';
+    module.src = moduleURL;
+    await new Promise((resolve, reject) => {
+      module.onload = resolve;
+      module.onerror = () => reject(new Error(`${scenario.name}: module failed to load`));
+      frame.contentDocument.body.append(module);
+    });
+    await paint(frame);
+    observing = false;
+    largestShift = Math.max(largestShift, displacement(initial, snapshot(frame)));
+    check(largestShift <= .1, `${scenario.name}: no item moves when JavaScript starts`,
+      `largest rectangle change ${largestShift.toFixed(3)} px`);
+    checkCentered(frame, `${scenario.name}, JavaScript ready`);
+
+    for (const [width, height] of scenario.sizes) {
+      frame.style.width = `${width}px`;
+      frame.style.height = `${height}px`;
+      await paint(frame);
+      checkCentered(frame, `${scenario.name}, resized to ${width} × ${height}`);
+    }
+    frame.style.width = `${scenario.width}px`;
+    frame.style.height = `${scenario.height}px`;
+    await paint(frame);
+  }
+} catch (error) {
+  check(false, error.message);
+}
+result.textContent = `${failed ? 'FAIL' : 'PASS'}: ${total - failed}/${total} checks`;
+result.dataset.passed = String(failed === 0);
+</script>

@@ -1,0 +1,129 @@
+/* Safari 4's compact, unified Snow Leopard toolbar. */
+.demo-window {
+  border-color: #686868;
+  border-radius: 5px 5px 0 0;
+  background: linear-gradient(#e5e5e5, #b4b4b4 51px, #b4b4b4);
+  box-shadow: 0 14px 27px #0007, 0 1px 5px #0005;
+}
+.browser-title {
+  height: 22px;
+  background: transparent;
+  border-top-color: #ffffffb3;
+  color: #202020;
+  font-size: 13px;
+  line-height: 20px;
+  text-shadow: 0 1px #fff8;
+}
+.traffic-lights { left: 7px; top: 4px; gap: 8px; }
+.traffic-lights i { width: 13px; height: 13px; }
+.toolbar-toggle { width: 19px; height: 7px; right: 8px; top: 7px; }
+.safari-toolbar {
+  height: 29px;
+  gap: 6px;
+  padding: 1px 6px 5px;
+  background: transparent;
+  border-bottom: 0;
+}
+.back-forward {
+  height: 22px;
+  flex: none;
+  border-color: #737373;
+  border-radius: 3px;
+  background: linear-gradient(#f1f1f1, #c9c9c9 50%, #bcbcbc);
+  box-shadow: inset 0 1px #fff9, 0 1px #fff5;
+}
+.back-forward span { display: grid; place-items: center; width: 25px; padding: 0; }
+.back-forward span + span { border-left-color: #8a8a8a; color: #969696; box-shadow: inset 1px 0 #fff5; }
+.back-forward svg { width: 9px; height: 10px; fill: currentColor; filter: drop-shadow(0 1px #fff7); }
+.toolbar-plus {
+  width: 25px;
+  height: 22px;
+  flex: none;
+  border-color: #737373;
+  border-radius: 3px;
+  background: linear-gradient(#f1f1f1, #c9c9c9 50%, #bcbcbc);
+  box-shadow: inset 0 1px #fff9, 0 1px #fff5;
+}
+.toolbar-plus svg { width: 12px; height: 12px; stroke: #444; stroke-width: 2; filter: drop-shadow(0 1px #fff9); }
+.address, .search-field {
+  height: 22px;
+  border-color: #7b7b7b;
+  background: #fff;
+  box-shadow: inset 0 1px 2px #0002, 0 1px #ffffff6b;
+  font-family: inherit;
+  font-size: 12px;
+}
+.address { border-radius: 3px; gap: 3px; padding: 0 4px; }
+.address img { width: 14px; height: 14px; }
+.reload { display: grid; place-items: center; flex: none; width: 15px; height: 16px; }
+.reload svg { width: 13px; height: 13px; fill: #717171; }
+.search-field { width: 156px; gap: 7px; padding: 0 8px; border-radius: 11px; }
+.bookmarks-bar {
+  height: 22px;
+  padding: 0 7px 2px;
+  gap: 17px;
+  background: transparent;
+  border-bottom-color: #7e7e7e;
+  font-size: 11px;
+  color: #262626;
+  text-shadow: 0 1px #fff7;
+}
+.book-icon, .top-sites { display: grid; place-items: center; flex: none; width: 16px; height: 16px; }
+.book-icon { margin-right: -6px; }
+.book-icon svg { width: 16px; height: 13px; fill: none; stroke: #414141; stroke-width: 1; filter: drop-shadow(0 1px #fff6); }
+.top-sites svg { width: 14px; height: 12px; fill: #414141; filter: drop-shadow(0 1px #fff6); }
+.safari-tabs {
+  height: 24px;
+  padding: 0 0 0 5px;
+  background: linear-gradient(#949494, #b0b0b0);
+  border-bottom-color: #696969;
+  box-shadow: inset 0 1px 2px #0003;
+}
+.safari-tab {
+  position: relative;
+  gap: 5px;
+  padding: 0 7px;
+  color: #343434;
+  font-size: 11px;
+  line-height: 22px;
+  border-right-color: #848484;
+  box-shadow: 1px 0 #d8d8d84d;
+}
+.safari-tab.selected {
+  min-width: 132px;
+  margin-top: 0;
+  background: linear-gradient(#c8c8c8, #dedede);
+  border-color: #7d7d7d;
+  border-radius: 5px 5px 0 0;
+  box-shadow: inset 0 1px #eee;
+}
+.safari-tab i { display: block; flex: none; color: #646464; font: 13px/1 Arial, sans-serif; }
+.tab-title { min-width: 0; overflow: hidden; text-overflow: ellipsis; text-align: center; flex: 1; }
+.tabs-overflow { flex: none; width: 22px; }
+.safari-status {
+  height: 18px;
+  padding-left: 7px;
+  background: linear-gradient(#c7c7c7, #b6b6b6);
+  border-top-color: #7e7e7e;
+  font-size: 11px;
+  color: #3c3c3c;
+}
+.resize-grip { display: block; width: 13px; height: 13px; margin: 2px 1px 0 0; }
+.resize-grip svg { width: 13px; height: 13px; fill: none; stroke: #7a7a7a; stroke-width: 1; filter: drop-shadow(0 1px #eee); }
+@media (max-width: 1050px) {
+  .search-field { width: 125px; }
+  .bookmarks-bar { gap: 15px; }
+  .safari-tab { font-size: 11px; padding-inline: 5px; }
+  .safari-tab.selected { min-width: 128px; }
+}
+@media (max-width: 700px) {
+  .safari-toolbar { gap: 5px; }
+  .back-forward span { width: 23px; padding: 0; }
+  .search-field { width: 83px; font-size: 11px; }
+  .address { font-size: 11px; }
+  .bookmarks-bar { gap: 14px; font-size: 11px; }
+  .safari-tabs { padding-left: 4px; }
+  .safari-tab { font-size: 11px; padding-inline: 4px; }
+  .safari-tab.selected { min-width: 120px; }
+  .safari-tab i { display: none; }
+}

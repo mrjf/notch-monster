@@ -1,0 +1,72 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Notch hover interaction check</title>
+<style>
+  body { margin: 16px; font: 14px system-ui; background: #eee; }
+  button { padding: 7px 14px; }
+  iframe { border: 1px solid #999; width: 100%; height: 650px; display: block; margin-top: 15px; }
+  #result { font-weight: 700; }
+</style>
+<button id="run">Run hover checks</button>
+<button id="wave">Preview wave</button>
+<button id="swat">Preview swat</button>
+<span id="result" role="status">Ready</span>
+<iframe id="demo" src="../dist/" title="Production Notch Monster desktop"></iframe>
+<ol id="checks"></ol>
+<script type="module">
+// Test-only pointer replay through the production DOM listeners. No fake
+// renderer or alternate animation path: this paints the real canvas.
+const frame = document.querySelector('#demo');
+const result = document.querySelector('#result');
+const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
+const page = () => frame.contentDocument;
+const desktop = () => page().querySelector('#desktop');
+const center = () => desktop().clientWidth / 2;
+function pointer(x, y, buttons = 0) {
+  desktop().dispatchEvent(new frame.contentWindow.PointerEvent('pointermove',
+    {clientX: x, clientY: y, pointerType: 'mouse', buttons, bubbles: true}));
+}
+function mode(enabled) {
+  const checkbox = page().querySelector('#bat-cursor');
+  if (checkbox.checked !== enabled) checkbox.click();
+}
+async function enter(bat) {
+  mode(bat);
+  pointer(center() + 190, 220);
+  await pause(1450);
+  pointer(center(), 82);
+}
+document.querySelector('#wave').onclick = async () => enter(false);
+document.querySelector('#swat').onclick = async () => enter(true);
+document.querySelector('#run').onclick = async () => {
+  result.textContent = 'Running…';
+  const checks = document.querySelector('#checks'); checks.replaceChildren();
+  let failures = 0, count = 0;
+  function check(pass, text) {
+    count++; if (!pass) failures++;
+    const line = document.createElement('li'); line.textContent = `${pass ? 'PASS' : 'FAIL'} · ${text}`; checks.append(line);
+  }
+  await enter(false);
+  check(desktop().dataset.hoverPlay === 'wave', 'Empty pointer starts a wave');
+  await pause(180);
+  const canvas = page().querySelector('#monster-canvas');
+  const pixels = canvas.getContext('2d').getImageData(0, 40, canvas.width, Math.min(200, canvas.height - 40)).data;
+  check(pixels.some((value, index) => index % 4 === 3 && value > 0), 'The actual arm canvas is visible');
+  await pause(850);
+  pointer(center(), 82);
+  check(!desktop().dataset.hoverPlay, 'Lingering does not repeat the wave');
+  pointer(center() + 190, 220); pointer(center(), 82, 1);
+  check(!desktop().dataset.hoverPlay, 'Holding a mouse button prevents idle play');
+  await enter(true); await pause(180);
+  check(desktop().dataset.hoverPlay === 'flight' && !page().querySelector('#flying-cursor').hidden,
+    'The swat launches a visible cursor at contact');
+  pointer(center() + 8, 90);
+  check(page().querySelector('#flying-cursor').hidden && !desktop().classList.contains('cursor-in-flight'),
+    'Moving the pointer immediately gives it back');
+  await enter(true); await pause(650);
+  check(page().querySelector('#flying-cursor').hidden && !desktop().classList.contains('cursor-in-flight'),
+    'A completed flight restores the normal cursor');
+  mode(false);
+  result.textContent = `${count - failures}/${count} passed`;
+};
+</script>

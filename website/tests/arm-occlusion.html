@@ -1,0 +1,47 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Arm aperture regression</title>
+<style>
+body{margin:24px;background:#eee;font:14px system-ui;color:#222}h1{font-size:20px}#cases{display:grid;grid-template-columns:repeat(2,440px);gap:18px}.case{position:relative;height:205px;background:#fff;border:1px solid #bbb}.bar{position:absolute;inset:0 0 auto;height:23px;background:linear-gradient(#eee,#aaa)}.notch{position:absolute;z-index:2;top:0;left:50%;transform:translateX(-50%);width:122px;height:23px;background:#111114;border-radius:0 0 12px 12px}canvas{position:absolute;inset:0;width:440px;height:160px}.label{position:absolute;bottom:10px;left:12px}#result{font-weight:bold}
+</style>
+<h1>Arm aperture — shallow reaches and retraction</h1>
+<p id="result">Rendering…</p><main id="cases"></main>
+<script type="module">
+import { MonsterArm } from '../dist/monster.js?v=aperture-clip';
+const cases = [
+  {name:'Right, almost horizontal',axis:{x:110,y:2},distance:110},
+  {name:'Left, almost horizontal',axis:{x:-110,y:2},distance:110},
+  {name:'Right diagonal',axis:{x:90,y:80},distance:120},
+  {name:'Left diagonal',axis:{x:-90,y:80},distance:120},
+  {name:'Right retraction at the opening',axis:{x:110,y:6},distance:20},
+  {name:'Left retraction at the opening',axis:{x:-110,y:6},distance:20},
+  {name:'Right hand fully withdrawn',axis:{x:110,y:6},distance:-76},
+  {name:'Left hand fully withdrawn',axis:{x:-110,y:6},distance:-76}
+];
+let failures = 0, tested = 0;
+for (const scenario of cases) {
+  const box=document.createElement('section'); box.className='case';
+  box.innerHTML='<div class="bar"></div><canvas></canvas><div class="notch"></div><div class="label"></div>';
+  document.querySelector('#cases').append(box);
+  const canvas=box.querySelector('canvas'), renderer=new MonsterArm(canvas);
+  const mag=Math.hypot(scenario.axis.x,scenario.axis.y), axis={x:scenario.axis.x/mag,y:scenario.axis.y/mag};
+  const origin={x:220,y:0}, hand={x:origin.x+axis.x*scenario.distance,y:axis.y*scenario.distance};
+  renderer.draw({origin,hand,direction:axis});
+  const pixels=renderer.ctx.getImageData(0,0,canvas.width,canvas.height).data;
+  let leaked=0, visible=0;
+  for(let y=0;y<canvas.height;y++) for(let x=0;x<canvas.width;x++) {
+    const alpha=pixels[(y*canvas.width+x)*4+3];
+    if(!alpha) continue;
+    visible++;
+    const projection=((x+.5)/renderer.dpr-origin.x)*axis.x+((y+.5)/renderer.dpr-origin.y)*axis.y;
+    if(projection < -1) leaked++;
+  }
+  const passed=leaked===0 && (scenario.distance<0 ? visible===0 : visible>0);
+  if(!passed) failures++;
+  tested++;
+  box.querySelector('.label').textContent=`${passed?'PASS':'FAIL'} · ${scenario.name} · ${leaked} rear pixels`;
+}
+const result=document.querySelector('#result');
+result.textContent=`${failures?'FAIL':'PASS'}: ${tested-failures}/${tested} cases; ${failures} exposed rear ends`;
+result.dataset.passed=String(failures===0);
+</script>

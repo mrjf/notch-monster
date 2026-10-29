@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+<!-- GitHub mark: primer/octicons@9c3c9d7426881584f6f507f3f4a54aea5879648e; MIT, see Octicons-LICENSE.txt. -->
+<defs>
+ <linearGradient id="chrome" x1="0" y1="0" x2=".8" y2="1"><stop stop-color="#fff"/><stop offset=".18" stop-color="#f5f7fa"/><stop offset=".42" stop-color="#a4b1c0"/><stop offset=".51" stop-color="#fff"/><stop offset=".7" stop-color="#dce4ed"/><stop offset="1" stop-color="#718194"/></linearGradient>
+ <radialGradient id="glass" cx=".38" cy=".22" r=".9"><stop stop-color="#b4e7ff"/><stop offset=".28" stop-color="#4ca5e5"/><stop offset=".62" stop-color="#176fb6"/><stop offset="1" stop-color="#06294f"/></radialGradient>
+ <linearGradient id="shine" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#fff" stop-opacity=".9"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+ <linearGradient id="pearl" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#fff"/><stop offset=".5" stop-color="#f4f8ff"/><stop offset="1" stop-color="#c3d7eb"/></linearGradient>
+ <filter id="shadow" x="-.3" y="-.2" width="1.6" height="1.6"><feGaussianBlur stdDeviation="2.4"/></filter>
+ <filter id="mark-shadow" x="-.2" y="-.2" width="1.4" height="1.4"><feDropShadow dx="0" dy="1.1" stdDeviation=".65" flood-color="#06315e" flood-opacity=".7"/></filter>
+ <clipPath id="face"><circle cx="64" cy="58" r="48"/></clipPath>
+</defs>
+<ellipse cx="65" cy="116" rx="43" ry="5" fill="#102338" opacity=".3" filter="url(#shadow)"/>
+<circle cx="64" cy="59" r="54" fill="url(#chrome)" stroke="#5b6e83" stroke-width=".8"/>
+<circle cx="64" cy="58" r="49" fill="url(#glass)" stroke="#edf9ff" stroke-width="1.2"/>
+<g clip-path="url(#face)" fill="none" stroke="#c1eeff" stroke-width=".55" opacity=".2">
+ <ellipse cx="64" cy="58" rx="25" ry="48"/><ellipse cx="64" cy="58" rx="42" ry="48"/><ellipse cx="64" cy="58" rx="48" ry="18"/><ellipse cx="64" cy="58" rx="48" ry="35"/>
+</g>
+<g transform="translate(28 21) scale(3)" fill="url(#pearl)" filter="url(#mark-shadow)"><path d="M10.226 17.284c-2.965-.36-5.054-2.493-5.054-5.256 0-1.123.404-2.336 1.078-3.144-.292-.741-.247-2.314.09-2.965.898-.112 2.111.36 2.83 1.01.853-.269 1.752-.404 2.853-.404 1.1 0 1.999.135 2.807.382.696-.629 1.932-1.1 2.83-.988.315.606.36 2.179.067 2.942.72.854 1.101 2 1.101 3.167 0 2.763-2.089 4.852-5.098 5.234.763.494 1.28 1.572 1.28 2.807v2.336c0 .674.561 1.056 1.235.786 4.066-1.55 7.255-5.615 7.255-10.646C23.5 6.188 18.334 1 11.978 1 5.62 1 .5 6.188.5 12.545c0 4.986 3.167 9.12 7.435 10.669.606.225 1.19-.18 1.19-.786V20.63a2.9 2.9 0 0 1-1.078.224c-1.483 0-2.359-.808-2.987-2.313-.247-.607-.517-.966-1.034-1.033-.27-.023-.359-.135-.359-.27 0-.27.45-.471.898-.471.652 0 1.213.404 1.797 1.235.45.651.921.943 1.483.943.561 0 .92-.202 1.437-.719.382-.381.674-.718.944-.943"/></g>
+<ellipse cx="57" cy="29" rx="35" ry="16" fill="url(#shine)" opacity=".5"/>
+<path d="M27 19v12m-6-6h12" fill="none" stroke="#fff" stroke-width="1.4" stroke-linecap="round" opacity=".9"/>
+<circle cx="24" cy="103" r="15" fill="url(#chrome)" stroke="#7d8a99" stroke-width=".7"/>
+<circle cx="24" cy="102" r="12.8" fill="url(#pearl)"/>
+<path d="M16 109v-7c0-4 3-7 8-7h3v-4l8 8-8 8v-5h-3c-4 0-6 3-8 7Z" fill="#283440"/>
+</svg>
