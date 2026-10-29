@@ -50,6 +50,7 @@ export class CaptureGesture {
     this.attached = false; this.withdrawn = false; this.previous = null;
     this.closest = Infinity; this.farthest = 0;
     this.outwardSince = null; this.outwardSamples = 0;
+    this.outwardFrom = 0; this.lastOutwardAt = -Infinity;
   }
   update(point, origin, radius, now) {
     const previous = this.previous;
@@ -62,9 +63,13 @@ export class CaptureGesture {
         this.closest = Math.min(this.closest, distance);
         this.outwardSince = null; this.outwardSamples = 0;
       } else if (distance > previousDistance + .01) {
-        this.outwardSince ??= now;
+        if (this.outwardSince === null || now - this.lastOutwardAt > 120) {
+          this.outwardSince = now; this.outwardSamples = 0;
+          this.outwardFrom = previousDistance;
+        }
+        this.lastOutwardAt = now;
         this.outwardSamples++;
-        const clearRetreat = distance - this.closest >= this.releaseDistance &&
+        const clearRetreat = distance - this.outwardFrom >= this.releaseDistance &&
           this.outwardSamples >= 2 && now - this.outwardSince >= 80;
         const farEscape = distance > radius + 240 && distance - this.closest >= 160;
         if (clearRetreat || farEscape) {

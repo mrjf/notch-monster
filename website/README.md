@@ -16,7 +16,7 @@ Wallpaper and historical icon provenance is in `ASSET-SOURCES.md`. The demo acce
 
 Verified: real pointer drop/withdrawal, all four items, window folding, keyboard, Dock restoration, no scroll overflow at 1280×800 and 390×667, no browser console errors, HTTPS on both domains, and public ZIP hash/signature.
 
-Run `npm test` for attachment and drop regressions. The drop tests execute the production pointer handlers with a controlled clock: quick drops, stationary holds, final mouse-up wobble, visible hand contact during retreat, and deliberate withdrawal. Releasing accepts either an attached hand or contact with the rendered hand; a small drag-distance threshold cannot veto it.
+Run `npm test` for attachment and drop regressions. The drop tests execute the production pointer handlers with a controlled clock: quick drops, stationary holds, final mouse-up wobble, visible hand contact during retreat, and deliberate withdrawal. Once an offer is accepted, releasing completes the feed. Only sustained, observed outward pointer movement can call it off; a pause, animation timing, or final mouse-up coordinate cannot revoke the grab. Released-button capture loss also completes an accepted drop, while pointer cancellation never feeds it.
 
 Arm rendering regression: serve the `website/` directory and open `tests/arm-occlusion.html`. It draws eight shallow-reach/retraction poses with the production renderer and checks the actual canvas pixels for leaks behind the notch. All eight must pass, including fully withdrawn hands with no visible pixels. This fixture is outside the deployed `dist/` directory.
 

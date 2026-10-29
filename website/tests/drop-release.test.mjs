@@ -385,3 +385,15 @@ test('slow deliberate backing-off accumulates across subpixel movement', async (
   page.pointer('pointerup', 500, 130);
   await expectKept(page);
 });
+
+test('a pause followed by tiny jitter does not turn an earlier toss into backing-off', async () => {
+  const page = playground();
+  page.approach();
+  page.pointer('pointermove', 500, 140);
+  await page.advance(1000);
+  page.pointer('pointermove', 500, 141);
+  await page.advance(100);
+  page.pointer('pointermove', 500, 142);
+  page.pointer('pointerup', 500, 142);
+  await expectConsumed(page);
+});

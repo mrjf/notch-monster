@@ -1,5 +1,5 @@
 import { MonsterArm } from './monster.js?v=aperture-clip';
-import { CaptureGesture, canFeedOnRelease } from './attachment.js?v=committed-grab';
+import { CaptureGesture, canFeedOnRelease } from './attachment.js?v=deliberate-backoff';
 import { SoundEffects } from './sounds.js?v=muted-default';
 import { installSoundSettings } from './sound-settings.js?v=hover-play';
 import { HoverPlay } from './hover-play.js?v=hover-play';
