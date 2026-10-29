@@ -65,6 +65,8 @@ struct SettingsView: View {
                     .font(.caption).foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
                 Text(model.message).font(.caption).foregroundStyle(.secondary).lineLimit(3)
+                Text("\(Bundle.main.object(forInfoDictionaryKey: "CFBundleDisplayName") as? String ?? "Notch Monster") \(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "Development") (\(Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "unpackaged"))")
+                    .font(.caption).foregroundStyle(.secondary)
             }
             .padding(24)
             .frame(maxWidth: .infinity, alignment: .leading)

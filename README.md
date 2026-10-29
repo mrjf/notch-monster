@@ -32,7 +32,16 @@ The packaging script selects an installed Apple Development identity by default.
 NOTCH_MONSTER_SIGNING_IDENTITY="Apple Development: Your Name (TEAMID)" scripts/package_app.sh
 ```
 
-Use the same signing identity across builds so macOS can retain the app's permission grants.
+Use the same signing identity across builds so macOS can retain the app's permission grants. Release packaging refuses ad hoc signatures, and the ZIP/DMG exporters also require an Apple signing certificate.
+
+For a local build without a signing certificate:
+
+```sh
+NOTCH_MONSTER_LOCAL_PREVIEW=1 scripts/package_app.sh
+open "dist/Notch Monster Preview.app"
+```
+
+This creates **Notch Monster Preview** with bundle identifier `com.notchmonster.preview`. Its permission entries are separate from the release app. Keep it outside Applications and quit the release app while testing native drags. Ad hoc preview grants may need renewing after a rebuild. A preview is not a distributable release.
 
 ## How it works
 
@@ -42,7 +51,7 @@ Use the same signing identity across builds so macOS can retain the app's permis
 - Drag a window by its title bar and release within reach. The app captures an image, closes that exact window, and squeezes the screenshot into an accordion fold during a roughly 180 ms yank.
 - Eating an application's last window also asks it to quit normally. Other windows, including minimized ones, keep it running. Save confirmations and refused closes never trigger a quit.
 - Moving five points away releases the hand, even inside its reach; smaller wobbles stay attached. Pausing after release keeps it released, so you can place a window near the notch. Moving closer again reattaches it. Moving inward or pausing while attached keeps the hand ready.
-- Use the purple-hand menu-bar icon to set **Arm length** (80–360 pt, remembered between launches), disable window closing, reduce motion, or quit.
+- Use Settings from the Dock or purple-hand menu-bar icon to set **Arm length** (80–360 pt, remembered between launches), disable window closing, reduce motion, or quit.
 - **Sound effects** are off by default. Enable the Earshot-made reach and yank cues in Settings, choose **Fuzzy**, **Rubber**, or **Arcade**, and use **Preview** to hear it. Mute and the selected set are remembered. All sounds are bundled and play locally; see [sound design](sound-design/README.md) for reproducible recipes.
 - To keep files and choose another action, select **Send to Raycast** in Settings. Install the [local Raycast companion](raycast/README.md) once, then drop one or more files into the notch for Open With, Quick Look, Reveal, Copy, or Trash actions. The file action is remembered between launches; the default is Trash.
 

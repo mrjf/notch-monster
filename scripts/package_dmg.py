@@ -21,6 +21,10 @@ destination = root / "website/dist/assets" / f"Notch-Monster-{version}.dmg"
 volume_name = "Notch Monster"
 signature = subprocess.run(["codesign", "-dv", "--verbose=4", str(source)],
                            capture_output=True, text=True, check=True).stderr
+if not any(authority in signature for authority in ("Authority=Apple Development:", "Authority=Developer ID Application:")):
+    raise SystemExit("Refusing to distribute an app without an Apple code-signing identity. Ad hoc builds invalidate permission grants on every rebuild.")
+if info["CFBundleIdentifier"] != "com.notchmonster.app":
+    raise SystemExit("Refusing to distribute a local preview.")
 developer_id = "Authority=Developer ID Application:" in signature
 notarized = developer_id and subprocess.run(["xcrun", "stapler", "validate", str(source)],
                                            capture_output=True).returncode == 0

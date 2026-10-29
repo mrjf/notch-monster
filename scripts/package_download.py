@@ -17,6 +17,10 @@ with tempfile.TemporaryDirectory(prefix="notch-monster-download-") as directory:
     subprocess.run(["xattr", "-cr", str(staged_app)], check=True)
     subprocess.run(["codesign", "--verify", "--deep", "--strict", str(staged_app)], check=True)
     signature = subprocess.run(["codesign", "-dv", "--verbose=4", str(staged_app)], capture_output=True, text=True, check=True).stderr
+    if not any(authority in signature for authority in ("Authority=Apple Development:", "Authority=Developer ID Application:")):
+        raise SystemExit("Refusing to distribute an app without an Apple code-signing identity. Ad hoc builds invalidate permission grants on every rebuild.")
+    if plistlib.loads((staged_app / "Contents/Info.plist").read_bytes())["CFBundleIdentifier"] != "com.notchmonster.app":
+        raise SystemExit("Refusing to distribute a local preview.")
     notarized = "Authority=Developer ID Application:" in signature and subprocess.run(
         ["xcrun", "stapler", "validate", str(staged_app)], capture_output=True).returncode == 0
     if notarized:
@@ -29,7 +33,7 @@ with tempfile.TemporaryDirectory(prefix="notch-monster-download-") as directory:
 
 Requires macOS 15 or later on Apple silicon.
 
-Move Notch Monster.app to Applications and open it. The purple-hand icon in the menu bar opens Settings. Allow Accessibility for window closing and Screen Recording for window snapshots.
+Move Notch Monster.app to Applications and open it. Settings opens at launch; click the Dock icon or reopen the app to return, even if the menu-bar icon is hidden. Settings checks Accessibility and performs a one-pixel capture test before enabling window grabbing. Allow both permissions and use Check permissions again after changing them. If macOS asks to quit and reopen, do so.
 
 Move toward the notch to meet the hand. Moving five points away releases it; smaller wobbles stay attached. Pausing after release leaves it released, so you can place the window there. Move closer again to reattach. Arm length in Settings controls its reach and is saved between launches.
 

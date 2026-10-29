@@ -4,6 +4,7 @@ import SwiftUI
 
 struct WindowPermissionsView: View {
     let permissions: WindowPermissions
+    private var appName: String { Bundle.main.object(forInfoDictionaryKey: "CFBundleDisplayName") as? String ?? "Notch Monster" }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -11,7 +12,7 @@ struct WindowPermissionsView: View {
                 .font(.headline)
             Text(permissions.ready
                  ? "Drag a window toward the notch, then release while grabbed."
-                 : "Window grabbing needs both permissions. Enable Notch Monster in each pane of System Settings.")
+                 : "Window grabbing needs both permissions. Enable \(appName) in each pane of System Settings.")
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -34,10 +35,10 @@ struct WindowPermissionsView: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
             if !permissions.ready {
-                Text("If Screen Recording is already on but this check fails, quit Notch Monster, turn its permission off and back on, then reopen the app. After replacing the app, you may need to remove its old entry and add the copy in Applications again.")
+                Text("If Screen Recording is already on but this check fails, quit \(appName), remove its old permission entry, then add this copy of the app again. A changed signing identity can leave the old entry enabled without granting access to this build.")
                     .font(.caption).foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
-                Text("If macOS asks you to quit and reopen, do so. You can always reopen Notch Monster from Applications or click its Dock icon to return here. Files work without these permissions.")
+                Text("If macOS asks you to quit and reopen, do so. Reopen \(appName) or click its Dock icon to return here. Files work without these permissions.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
