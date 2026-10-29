@@ -2,11 +2,12 @@ import SwiftUI
 
 struct SettingsView: View {
     @Bindable var model: MonsterModel
+    let permissions: WindowPermissions
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 18) {
-                WindowPermissionsView()
+                WindowPermissionsView(permissions: permissions)
                 Divider()
                 Toggle("Keep the monster awake", isOn: $model.enabled)
                 Toggle("Let it close dragged windows", isOn: $model.closeWindows)

@@ -48,7 +48,7 @@ Use the same signing identity across builds so macOS can retain the app's permis
 
 Settings opens when the app launches. Return to it by clicking Notch Monster in the Dock or reopening it from Applications, even when its menu-bar icon is hidden.
 
-Window feeding requires **Accessibility** permission to control the window and **Screen Recording** permission to capture its image. The checklist at the top of Settings shows which permissions are missing, with an Enable button for each System Settings pane. Enable Notch Monster in both panes; if macOS asks you to quit and reopen the app, do so. The checklist updates as permissions change. Until both permissions are allowed, window grabbing stays off; file drops still work. No Automation or System Events permission is needed.
+Window feeding requires **Accessibility** permission to control the window and **Screen Recording** permission to capture its image. The checklist at the top of Settings shows which permissions are missing, with an Enable button for each System Settings pane. Enable Notch Monster in both panes; if macOS asks you to quit and reopen the app, do so. On every launch, the app checks Accessibility and verifies ScreenCaptureKit by taking and discarding a single-pixel capture. The checklist reports the actual capture error if a grant is stale or unusable; use Check permissions again after changing permissions. Until both checks pass, window grabbing stays off; file drops still work. No Automation or System Events permission is needed.
 
 If an application refuses to close or asks for confirmation, the window remains open. Reduced motion uses a short fade.
 

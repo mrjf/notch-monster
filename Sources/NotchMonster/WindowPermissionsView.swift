@@ -3,32 +3,40 @@ import ApplicationServices
 import SwiftUI
 
 struct WindowPermissionsView: View {
-    @State private var accessibilityGranted = AXIsProcessTrusted()
-    @State private var screenRecordingGranted = CGPreflightScreenCaptureAccess()
-
-    private var ready: Bool { accessibilityGranted && screenRecordingGranted }
+    let permissions: WindowPermissions
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(ready ? "Ready to grab windows" : "Set up window grabbing")
+            Text(permissions.ready ? "Ready to grab windows" : "Set up window grabbing")
                 .font(.headline)
-            Text(ready
+            Text(permissions.ready
                  ? "Drag a window toward the notch, then release while grabbed."
                  : "Window grabbing needs both permissions. Enable Notch Monster in each pane of System Settings.")
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
-            permissionRow("Accessibility", detail: "Find and close the window you feed it.", granted: accessibilityGranted) {
+            permissionRow("Accessibility", detail: "Find and close the window you feed it.", granted: permissions.accessibilityGranted) {
                 if !AXIsProcessTrusted() {
                     AXIsProcessTrustedWithOptions(["AXTrustedCheckOptionPrompt": true] as CFDictionary)
                 }
                 openPrivacyPane("Privacy_Accessibility")
             }
-            permissionRow("Screen Recording", detail: "Capture that window for the eating animation.", granted: screenRecordingGranted) {
-                if !CGPreflightScreenCaptureAccess() { CGRequestScreenCaptureAccess() }
+            permissionRow("Screen Recording", detail: "Capture that window for the eating animation.", granted: permissions.screenRecordingGranted) {
                 openPrivacyPane("Privacy_ScreenCapture")
             }
-            if !ready {
+            Button(permissions.checking ? "Checking capture…" : "Check permissions again") {
+                Task { await permissions.check() }
+            }
+            .disabled(permissions.checking)
+            if let error = permissions.captureError {
+                Text("Capture check failed: \(error)")
+                    .font(.caption).foregroundStyle(.red)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            if !permissions.ready {
+                Text("If Screen Recording is already on but this check fails, quit Notch Monster, turn its permission off and back on, then reopen the app. After replacing the app, you may need to remove its old entry and add the copy in Applications again.")
+                    .font(.caption).foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
                 Text("If macOS asks you to quit and reopen, do so. You can always reopen Notch Monster from Applications or click its Dock icon to return here. Files work without these permissions.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
@@ -36,8 +44,7 @@ struct WindowPermissionsView: View {
             }
         }
         .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { _ in
-            accessibilityGranted = AXIsProcessTrusted()
-            screenRecordingGranted = CGPreflightScreenCaptureAccess()
+            permissions.refreshAccessibility()
         }
     }
 

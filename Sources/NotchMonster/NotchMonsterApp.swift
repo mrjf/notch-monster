@@ -7,7 +7,7 @@ struct NotchMonsterApp: App {
 
     var body: some Scene {
         Settings {
-            SettingsView(model: appDelegate.model)
+            SettingsView(model: appDelegate.model, permissions: appDelegate.permissions)
         }
         .windowResizability(.contentSize)
     }
@@ -16,6 +16,7 @@ struct NotchMonsterApp: App {
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
     let model = MonsterModel()
+    let permissions = WindowPermissions()
     private var overlayController: OverlayController?
     private var statusItem: NSStatusItem?
     private var windowWatcher: WindowDragWatcher?
@@ -27,7 +28,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         NSApp.setActivationPolicy(.regular)
         overlayController = OverlayController(model: model)
         overlayController?.install()
-        windowWatcher = WindowDragWatcher(model: model, animator: animator) { [weak self] point in
+        windowWatcher = WindowDragWatcher(model: model, animator: animator, permissions: permissions, showSettings: { [weak self] in self?.openSettings() }) { [weak self] point in
             self?.overlayController?.trackFileDrag(at: point)
         }
         model.onFileConsumed = { [weak self] icon, cursor, notch in
@@ -41,6 +42,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         idleHover?.start()
         installMenuBarItem()
         openSettings()
+        Task { await permissions.check() }
+    }
+
+    func applicationDidBecomeActive(_ notification: Notification) {
+        permissions.refreshAccessibility()
     }
 
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
@@ -76,7 +82,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     @objc func openSettings() {
         if settingsWindowController == nil {
-            let content = NSHostingView(rootView: SettingsView(model: model))
+            let content = NSHostingView(rootView: SettingsView(model: model, permissions: permissions))
             content.sizingOptions = .standardBounds
             let window = NSWindow(
                 contentRect: NSRect(origin: .zero, size: content.fittingSize),

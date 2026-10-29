@@ -4,21 +4,15 @@ import ScreenCaptureKit
 @MainActor
 enum WindowSnapshot {
     enum CaptureError: LocalizedError {
-        case permissionRequired
         case windowNotFound
         var errorDescription: String? {
             switch self {
-            case .permissionRequired: "Enable Screen Recording for Notch Monster to animate a window snapshot."
             case .windowNotFound: "The dragged window could not be captured."
             }
         }
     }
 
     static func capture(pid: pid_t, bounds: CGRect, title: String?) async throws -> NSImage {
-        guard CGPreflightScreenCaptureAccess() else {
-            CGRequestScreenCaptureAccess()
-            throw CaptureError.permissionRequired
-        }
         let content = try await SCShareableContent.excludingDesktopWindows(true, onScreenWindowsOnly: true)
         // Match the captured window, never whichever window happens to be front.
         let candidates = content.windows.filter {
