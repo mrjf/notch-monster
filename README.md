@@ -46,7 +46,9 @@ Use the same signing identity across builds so macOS can retain the app's permis
 - **Sound effects** are off by default. Enable the Earshot-made reach and yank cues in Settings, choose **Fuzzy**, **Rubber**, or **Arcade**, and use **Preview** to hear it. Mute and the selected set are remembered. All sounds are bundled and play locally; see [sound design](sound-design/README.md) for reproducible recipes.
 - To keep files and choose another action, select **Send to Raycast** in Settings. Install the [local Raycast companion](raycast/README.md) once, then drop one or more files into the notch for Open With, Quick Look, Reveal, Copy, or Trash actions. The file action is remembered between launches; the default is Trash.
 
-Window feeding requires **Accessibility** permission to control the window and **Screen Recording** permission to capture its image. Enable Notch Monster under **System Settings → Privacy & Security** when requested. No Automation or System Events permission is needed.
+Settings opens when the app launches. Return to it by clicking Notch Monster in the Dock or reopening it from Applications, even when its menu-bar icon is hidden.
+
+Window feeding requires **Accessibility** permission to control the window and **Screen Recording** permission to capture its image. The checklist at the top of Settings shows which permissions are missing, with an Enable button for each System Settings pane. Enable Notch Monster in both panes; if macOS asks you to quit and reopen the app, do so. The checklist updates as permissions change. Until both permissions are allowed, window grabbing stays off; file drops still work. No Automation or System Events permission is needed.
 
 If an application refuses to close or asks for confirmation, the window remains open. Reduced motion uses a short fade.
 

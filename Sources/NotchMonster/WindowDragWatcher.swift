@@ -217,7 +217,7 @@ final class WindowDragWatcher {
     }
 
     private func window(at point: CGPoint) -> AXUIElement? {
-        guard AXIsProcessTrusted() else { return nil }
+        guard AXIsProcessTrusted(), CGPreflightScreenCaptureAccess() else { return nil }
         var hit: AXUIElement?
         AXUIElementCopyElementAtPosition(AXUIElementCreateSystemWide(), Float(point.x), Float(primaryTop - point.y), &hit)
         var node = hit

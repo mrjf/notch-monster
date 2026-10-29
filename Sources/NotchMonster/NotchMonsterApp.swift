@@ -1,5 +1,4 @@
 import AppKit
-import ApplicationServices
 import SwiftUI
 
 @main
@@ -25,7 +24,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let animator = ConsumptionAnimator()
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        NSApp.setActivationPolicy(.accessory)
+        NSApp.setActivationPolicy(.regular)
         overlayController = OverlayController(model: model)
         overlayController?.install()
         windowWatcher = WindowDragWatcher(model: model, animator: animator) { [weak self] point in
@@ -40,15 +39,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             return self.windowWatcher?.isBusy == true || self.overlayController?.hasActiveFileDrag == true
         }
         idleHover?.start()
-        requestAccessibilityPermission()
-        if !CGPreflightScreenCaptureAccess() { CGRequestScreenCaptureAccess() }
         installMenuBarItem()
+        openSettings()
     }
 
-    private func requestAccessibilityPermission() {
-        guard !AXIsProcessTrusted() else { return }
-        let options = ["AXTrustedCheckOptionPrompt": true] as CFDictionary
-        AXIsProcessTrustedWithOptions(options)
+    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+        openSettings()
+        return false
     }
 
     func applicationWillTerminate(_ notification: Notification) {
@@ -72,8 +69,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         menu.addItem(.separator())
         let settingsItem = menu.addItem(withTitle: "Settings…", action: #selector(openSettings), keyEquivalent: ",")
         settingsItem.target = self
-        let snapshotsItem = menu.addItem(withTitle: "Enable window snapshots…", action: #selector(enableSnapshots), keyEquivalent: "")
-        snapshotsItem.target = self
         menu.addItem(withTitle: "Quit Notch Monster", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
         item.menu = menu
         statusItem = item
@@ -98,12 +93,5 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         NSApp.activate(ignoringOtherApps: true)
         settingsWindowController?.showWindow(nil)
         settingsWindowController?.window?.makeKeyAndOrderFront(nil)
-    }
-
-    @objc private func enableSnapshots() {
-        CGRequestScreenCaptureAccess()
-        if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_ScreenCapture") {
-            NSWorkspace.shared.open(url)
-        }
     }
 }
