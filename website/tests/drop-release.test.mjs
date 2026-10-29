@@ -60,9 +60,9 @@ function playground({fileHome = {x: 750, y: 200}} = {}) {
     HoverPlay: class { cancel() {} }
   });
   new vm.Script(source, {filename: 'demo.js'}).runInContext(context);
-  function pointer(type, x, y) {
+  function pointer(type, x, y, extra = {}) {
     file.listeners.get(type)({button: 0, pointerId: 1, clientX: x, clientY: y,
-      currentTarget: file, preventDefault() {}});
+      currentTarget: file, preventDefault() {}, ...extra});
   }
   async function advance(milliseconds) {
     const end = now + milliseconds;
@@ -158,8 +158,9 @@ test('clearly backing farther away after the toss still lets the item go', async
   page.pointer('pointerdown', 800, 220);
   page.pointer('pointermove', 200, 80);
   await page.advance(500);
-  page.pointer('pointermove', 150, 80);
-  await page.advance(200);
+  page.pointer('pointermove', 180, 80); await page.advance(45);
+  page.pointer('pointermove', 165, 80); await page.advance(45);
+  page.pointer('pointermove', 150, 80); await page.advance(200);
   page.pointer('pointerup', 150, 80);
   await expectKept(page);
 });
@@ -198,19 +199,15 @@ test('a release that supplies the first in-reach sample feeds immediately', asyn
   await expectConsumed(page);
 });
 
-test('release-only grace is bounded and cannot swallow a large final jump', async t => {
-  await t.test('48 pixels still feeds the accepted drop', async () => {
-    const page = playground();
-    page.approach();
-    page.pointer('pointerup', 500, 128);
-    await expectConsumed(page);
-  });
-  await t.test('49 pixels clear of the hand keeps the item', async () => {
-    const page = playground();
-    page.approach();
-    page.pointer('pointerup', 500, 129);
-    await expectKept(page);
-  });
+test('release coordinates cannot revoke a grab without observed backing-off', async t => {
+  for (const y of [128, 129, 200]) {
+    await t.test(`release coordinate ${y}`, async () => {
+      const page = playground();
+      page.approach();
+      page.pointer('pointerup', 500, y);
+      await expectConsumed(page);
+    });
+  }
 });
 
 test('a modest outward move still feeds before the first animation frame', async () => {
@@ -311,7 +308,7 @@ test('a stationary hold already in reach feeds without crossing a drag threshold
   await expectConsumed(page);
 });
 
-test('release during the first visible part of retreat still feeds on contact', async () => {
+test('quick outward movement with the hand on the item still feeds', async () => {
   const page = playground();
   page.approach(); await page.advance(100);
   page.pointer('pointermove', 500, 116);
@@ -323,27 +320,68 @@ test('release during the first visible part of retreat still feeds on contact', 
 test('a deliberate withdrawal followed by a pause keeps the item', async () => {
   const page = playground();
   page.approach(); await page.advance(100);
-  page.pointer('pointermove', 500, 130); await page.advance(200);
+  page.pointer('pointermove', 500, 100); await page.advance(45);
+  page.pointer('pointermove', 500, 115); await page.advance(45);
+  page.pointer('pointermove', 500, 140); await page.advance(200);
   assert.equal(page.hand(), undefined);
-  page.pointer('pointerup', 500, 130);
+  page.pointer('pointerup', 500, 140);
   await expectKept(page);
 });
 
 test('moving inward again after a deliberate withdrawal reattaches promptly', async () => {
   const page = playground();
   page.approach(); await page.advance(100);
-  page.pointer('pointermove', 500, 130); await page.advance(200);
+  page.pointer('pointermove', 500, 100); await page.advance(45);
+  page.pointer('pointermove', 500, 115); await page.advance(45);
+  page.pointer('pointermove', 500, 140); await page.advance(200);
   assert.equal(page.hand(), undefined);
-  page.pointer('pointermove', 500, 129); await page.advance(50);
-  assert.deepEqual({...page.hand()}, {x: 500, y: 129});
-  page.pointer('pointerup', 500, 129);
+  page.pointer('pointermove', 500, 139); await page.advance(50);
+  assert.deepEqual({...page.hand()}, {x: 500, y: 139});
+  page.pointer('pointerup', 500, 139);
   await expectConsumed(page);
 });
 
-test('a large final jump clear of the hand keeps the item', async () => {
+test('even a large release-only coordinate change cannot call off the offer', async () => {
   const page = playground();
   page.approach(); await page.advance(100);
   page.pointer('pointerup', 500, 200);
   assert.equal(parseFloat(page.file.style.top), 180);
+  await expectConsumed(page);
+});
+
+
+test('a single fast outward sample followed by a pause is not deliberate backing-off', async () => {
+  const page = playground();
+  page.approach();
+  page.pointer('pointermove', 500, 140);
+  await page.advance(1000);
+  page.pointer('pointerup', 500, 140);
+  await expectConsumed(page);
+});
+
+test('capture loss with released buttons finishes a committed drop', async () => {
+  const page = playground();
+  page.approach();
+  page.pointer('lostpointercapture', 0, 0, {buttons: 0});
+  await expectConsumed(page);
+});
+
+test('a canceled pointer never feeds through a later capture-loss event', async () => {
+  const page = playground();
+  page.approach();
+  page.pointer('pointercancel', 500, 80);
+  page.pointer('lostpointercapture', 500, 80, {buttons: 0});
+  await expectKept(page);
+});
+
+test('slow deliberate backing-off accumulates across subpixel movement', async () => {
+  const page = playground();
+  page.approach();
+  for (let step = 1; step <= 200; step++) {
+    page.pointer('pointermove', 500, 80 + step * .25);
+    await page.advance(2);
+  }
+  await page.advance(200);
+  page.pointer('pointerup', 500, 130);
   await expectKept(page);
 });

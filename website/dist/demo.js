@@ -1,5 +1,5 @@
 import { MonsterArm } from './monster.js?v=aperture-clip';
-import { CaptureGesture, canFeedOnRelease } from './attachment.js?v=fast-toss';
+import { CaptureGesture, canFeedOnRelease } from './attachment.js?v=committed-grab';
 import { SoundEffects } from './sounds.js?v=muted-default';
 import { installSoundSettings } from './sound-settings.js?v=hover-play';
 import { HoverPlay } from './hover-play.js?v=hover-play';
@@ -18,7 +18,7 @@ const safariLight = document.querySelector('#safari-light');
 const trashIcon = document.querySelector('#trash-icon');
 const renderer = new MonsterArm(canvas);
 // Keep hold through ordinary trackpad wobble; an intentional pull still lets go.
-const attachment = new CaptureGesture(36, 1);
+const attachment = new CaptureGesture(48, 1);
 const sounds = new SoundEffects();
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
 const items = [...document.querySelectorAll('.demo-item')].map(element => ({element, x: 0, y: 0, consumed: false}));
@@ -158,8 +158,9 @@ function releaseDrag(event) {
   // Snapshot readiness BEFORE processing the final coordinate. A release
   // wobble must not undo a grab just because the arm's first frame is pending.
   const readyPoint = attachment.attached ? released.lastPoint : null;
+  const accepted = attachment.attached || (!attachment.withdrawn && updateAttachment(point));
   const canConsume = canFeedOnRelease({
-    readyPoint, attached: updateAttachment(point), phase: arm.phase,
+    readyPoint, attached: accepted, withdrawn: attachment.withdrawn, phase: arm.phase,
     hand: arm.hand, point, scale: armScale()
   });
   // Some devices put the last movement only on pointerup.
@@ -187,7 +188,16 @@ for (const item of items) {
   handle.addEventListener('pointermove', moveDrag);
   handle.addEventListener('pointerup', releaseDrag);
   handle.addEventListener('pointercancel', cancelDrag);
-  handle.addEventListener('lostpointercapture', event => { if (drag?.id === event.pointerId) cancelDrag(event); });
+  handle.addEventListener('lostpointercapture', event => {
+    if (drag?.id !== event.pointerId) return;
+    // Some browsers lose capture at release before the handle gets pointerup.
+    // A canceled pointer has already cleared drag; held buttons still cancel.
+    if (event.buttons === 0 && document.hasFocus?.() !== false) {
+      const bounds = desktop.getBoundingClientRect(), point = drag.lastPoint;
+      releaseDrag({pointerId: event.pointerId, clientX: point.x + bounds.left,
+        clientY: point.y + bounds.top, preventDefault() {}});
+    } else cancelDrag(event);
+  });
   handle.addEventListener('click', event => {
     // Native button activation via Enter, Space, or assistive technology.
     if (event.detail === 0 && !busy && !item.consumed) void feedAutomatically(item);

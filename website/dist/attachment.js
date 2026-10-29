@@ -37,46 +37,53 @@ export class DirectionalAttachment {
   }
 }
 
-// Pointer events can skip straight across the notch during a fast toss. Test
-// the whole traveled segment, then hold through its forward follow-through.
-// Reversing and backing away still uses the normal hand-width release rule.
+// Capture is a commitment. Only observed outward pointer MOVEMENT can revoke
+// it: a full hand-width, over multiple samples and at least 80 ms. Mouse-up,
+// stationary samples and the arm's animation never make that decision.
 export class CaptureGesture {
-  constructor(releaseDistance = 36, reattachDistance = 1) {
-    this.policy = new DirectionalAttachment(releaseDistance, reattachDistance);
+  constructor(releaseDistance = 48, reattachDistance = 1) {
+    this.releaseDistance = releaseDistance;
+    this.reattachDistance = reattachDistance;
     this.reset();
   }
-  get attached() { return this.policy.attached; }
   reset() {
-    this.policy.reset(); this.previous = null;
-    this.entered = -Infinity; this.incoming = {x: 0, y: 0};
+    this.attached = false; this.withdrawn = false; this.previous = null;
+    this.closest = Infinity; this.farthest = 0;
+    this.outwardSince = null; this.outwardSamples = 0;
   }
   update(point, origin, radius, now) {
     const previous = this.previous;
     this.previous = {...point};
     const distance = Math.hypot(point.x - origin.x, point.y - origin.y);
-    const movement = previous ? {x: point.x - previous.x, y: point.y - previous.y} : {x: 0, y: 0};
-    const wasAttached = this.attached;
-    const inReach = point.y >= origin.y + (wasAttached ? -160 : 0) &&
-      distance <= radius + (wasAttached ? 160 : 0);
-    const forward = movement.x * this.incoming.x + movement.y * this.incoming.y > 0;
-    const followThrough = wasAttached && now - this.entered <= 180 && forward &&
-      point.y >= origin.y - 160 && distance <= radius + 160;
-    if (followThrough) {
-      // The hand follows the toss. Measure any later backing-off from where
-      // it caught the item, so a tiny wobble after overshoot cannot detach it.
-      this.policy.anchor = distance;
-      return true;
+    const previousDistance = previous ? Math.hypot(previous.x - origin.x, previous.y - origin.y) : distance;
+    const inReach = point.y >= origin.y && distance <= radius;
+    if (this.attached) {
+      if (distance < this.closest || distance < previousDistance - .5) {
+        this.closest = Math.min(this.closest, distance);
+        this.outwardSince = null; this.outwardSamples = 0;
+      } else if (distance > previousDistance + .01) {
+        this.outwardSince ??= now;
+        this.outwardSamples++;
+        const clearRetreat = distance - this.closest >= this.releaseDistance &&
+          this.outwardSamples >= 2 && now - this.outwardSince >= 80;
+        const farEscape = distance > radius + 240 && distance - this.closest >= 160;
+        if (clearRetreat || farEscape) {
+          this.attached = false; this.withdrawn = true; this.farthest = distance;
+        }
+      }
+      return this.attached;
     }
-    let accepted = this.policy.update(distance, inReach);
-    if (!accepted && !wasAttached && this.policy.anchor === null && previous &&
-        point.y >= origin.y - 160 && distance <= radius + 160) {
-      const hit = segmentOffer(previous, point, origin, radius);
-      if (hit !== null) accepted = this.policy.update(distance, true);
+    if (this.withdrawn) {
+      this.farthest = Math.max(this.farthest, distance);
+      if (!inReach || distance > this.farthest - this.reattachDistance) return false;
+    } else {
+      const swept = previous && point.y >= origin.y - 160 && distance <= radius + 240 &&
+        segmentOffer(previous, point, origin, radius) !== null;
+      if (!inReach && !swept) return false;
     }
-    if (accepted && !wasAttached) {
-      this.entered = now; this.incoming = movement;
-    }
-    return accepted;
+    this.attached = true; this.withdrawn = false; this.closest = distance;
+    this.outwardSince = null; this.outwardSamples = 0;
+    return true;
   }
 }
 
@@ -95,13 +102,10 @@ function segmentOffer(start, end, origin, radius) {
   return distance <= radius ? distance : null;
 }
 
-// The last pointermove owns grab intent. Pointerup can contain a small extra
-// movement before the hand has even painted; that must not revoke a ready
-// grab. Actual outward pointermove still detaches and removes this allowance.
-// A large release-only jump remains an escape, even if it ends within reach.
-export function canFeedOnRelease({attached, readyPoint, phase, hand, point, scale = 1}) {
-  const readyOnRelease = readyPoint && Math.hypot(point.x - readyPoint.x, point.y - readyPoint.y) <= 48 * scale;
-  // Open fingers can still touch the item during the first part of retreat.
-  return Boolean(readyOnRelease) || attached || ((phase === 'reaching' || phase === 'retreating') &&
+// A confirmed retreat vetoes the drop. Otherwise a committed grab is enough;
+// no animation frame, dwell timer, or final pointerup coordinate can revoke it.
+export function canFeedOnRelease({attached, withdrawn = false, readyPoint, phase, hand, point, scale = 1}) {
+  if (withdrawn) return false;
+  return attached || Boolean(readyPoint) || ((phase === 'reaching' || phase === 'retreating') &&
     Math.hypot(point.x - hand.x, point.y - hand.y) <= 36 * scale);
 }
