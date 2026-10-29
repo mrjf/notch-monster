@@ -7,6 +7,8 @@ final class WindowDragWatcher {
     private let logger = Logger(subsystem: "com.notchmonster.app", category: "WindowCapture")
     private let model: MonsterModel
     private let animator: ConsumptionAnimator
+    private let permissions: WindowPermissions
+    private let showSettings: () -> Void
     private let updateFileDropTarget: (CGPoint?) -> Void
     private var monitors: [Any] = []
     private var poller: Timer?
@@ -22,9 +24,12 @@ final class WindowDragWatcher {
     private var attachment = DragAttachmentPolicy()
     var isBusy: Bool { session != nil || consuming }
 
-    init(model: MonsterModel, animator: ConsumptionAnimator, updateFileDropTarget: @escaping (CGPoint?) -> Void) {
+    init(model: MonsterModel, animator: ConsumptionAnimator, permissions: WindowPermissions,
+         showSettings: @escaping () -> Void, updateFileDropTarget: @escaping (CGPoint?) -> Void) {
         self.model = model
         self.animator = animator
+        self.permissions = permissions
+        self.showSettings = showSettings
         self.updateFileDropTarget = updateFileDropTarget
     }
 
@@ -217,7 +222,7 @@ final class WindowDragWatcher {
     }
 
     private func window(at point: CGPoint) -> AXUIElement? {
-        guard AXIsProcessTrusted() else { return nil }
+        guard permissions.ready, AXIsProcessTrusted() else { return nil }
         var hit: AXUIElement?
         AXUIElementCopyElementAtPosition(AXUIElementCreateSystemWide(), Float(point.x), Float(primaryTop - point.y), &hit)
         var node = hit
@@ -251,12 +256,15 @@ final class WindowDragWatcher {
               let closeSession = WindowCloseSession(window: window) else {
             logger.error("CAPTURE failed to read geometry/close button trusted=\(AXIsProcessTrusted())")
             model.fail("Window access failed. Check Accessibility in Settings.")
+            permissions.refreshAccessibility()
+            if !permissions.accessibilityGranted { showSettings() }
             return
         }
         var pid: pid_t = 0
         AXUIElementGetPid(window, &pid)
         do {
             let snapshot = try await WindowSnapshot.capture(pid: pid, bounds: CGRect(origin: origin, size: originalSize), title: attribute(window, kAXTitleAttribute) as? String)
+            permissions.captureSucceeded()
             logger.notice("SNAPSHOT captured pid=\(pid)")
             let frame = CGRect(x: origin.x, y: primaryTop - origin.y - originalSize.height, width: originalSize.width, height: originalSize.height)
             let ownerPID = pid
@@ -288,6 +296,9 @@ final class WindowDragWatcher {
         } catch {
             logger.error("SNAPSHOT failed: \(error.localizedDescription, privacy: .public)")
             model.fail(error.localizedDescription)
+            if case WindowSnapshot.CaptureError.windowNotFound = error { return }
+            permissions.captureFailed(error)
+            showSettings()
         }
     }
 

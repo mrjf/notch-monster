@@ -5,6 +5,7 @@ Install scripts/dmg-requirements.txt in a virtualenv, then run with its Python.
 The app must already be built and signed by scripts/package_app.sh.
 """
 from pathlib import Path
+import os
 import plistlib
 import shutil
 import subprocess
@@ -21,6 +22,12 @@ destination = root / "website/dist/assets" / f"Notch-Monster-{version}.dmg"
 volume_name = "Notch Monster"
 signature = subprocess.run(["codesign", "-dv", "--verbose=4", str(source)],
                            capture_output=True, text=True, check=True).stderr
+ad_hoc = "Signature=adhoc" in signature
+allow_ad_hoc = ad_hoc and os.environ.get("NOTCH_MONSTER_ALLOW_AD_HOC_RELEASE") == "1"
+if not allow_ad_hoc and not any(authority in signature for authority in ("Authority=Apple Development:", "Authority=Developer ID Application:")):
+    raise SystemExit("Refusing to distribute an app without an Apple code-signing identity. Set NOTCH_MONSTER_ALLOW_AD_HOC_RELEASE=1 explicitly for an ad hoc interim release that may require new permission grants after updates.")
+if info["CFBundleIdentifier"] != "com.notchmonster.app":
+    raise SystemExit("Refusing to distribute a local preview.")
 developer_id = "Authority=Developer ID Application:" in signature
 notarized = developer_id and subprocess.run(["xcrun", "stapler", "validate", str(source)],
                                            capture_output=True).returncode == 0
@@ -37,6 +44,8 @@ with tempfile.TemporaryDirectory(prefix="notch-monster-installer-") as directory
     render = ["swift", str(root / "scripts/dmg_background.swift"), str(artwork)]
     if notarized:
         render.append("--notarized")
+    elif ad_hoc:
+        render.append("--ad-hoc")
     subprocess.run(render, check=True)
 
     image = stage / destination.name
@@ -75,3 +84,5 @@ with tempfile.TemporaryDirectory(prefix="notch-monster-installer-") as directory
 
 print(f"Verified installer: {destination}")
 print("Includes the signed app, Applications shortcut, Retina artwork, and saved Finder layout.")
+if ad_hoc:
+    print("Interim release: ad hoc signed, not notarized; updates may require new Accessibility and Screen Recording grants.")

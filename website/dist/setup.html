@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#bcbcbc">
+<title>Set up Notch Monster</title>
+<meta name="description" content="Install Notch Monster, open Settings from the Dock, and enable the permissions for grabbing windows.">
+<link rel="icon" href="./assets/favicon.png?v=fuzzy-hand" type="image/png">
+<link rel="stylesheet" href="./setup.css">
+</head>
+<body>
+<main class="setup-window">
+<header class="window-title"><img src="./assets/favicon.png?v=fuzzy-hand" alt="">Notch Monster — Setup</header>
+<div class="setup-content">
+<a class="back-link" href="./">← Back to the monster</a>
+<h1>Give the monster a hand.</h1>
+<p class="intro">Version 0.1.12 makes Settings accessible from the Dock and checks window permissions when it starts. This is an early build without Apple notarization, so macOS needs your approval to open it.</p>
+<ol class="setup-steps">
+<li><h2>Move it to Applications</h2><p>Quit any older copy. Open the <a href="./assets/Notch-Monster-0.1.12.dmg" download>downloaded DMG</a>, drag Notch Monster to Applications, and replace the old version if asked. Eject the installer, then open Notch Monster from Applications.</p></li>
+<li><h2>Allow the first launch</h2><p>If macOS blocks the app because it cannot verify the developer, open <strong>System Settings → Privacy &amp; Security</strong>, scroll to the blocked-app message, and choose <strong>Open Anyway</strong>. Confirm the prompt for Notch Monster. <a href="https://support.apple.com/en-us/102445">Apple’s instructions</a></p></li>
+<li><h2>Open the app’s Settings</h2><p>Settings appears when Notch Monster starts. Click its <strong>Dock icon</strong> or reopen it from Applications to bring Settings back. You can always get there even if the menu bar is full.</p></li>
+<li><h2>Enable both window permissions</h2><p>Use the <strong>Enable</strong> buttons in the app’s checklist. In System Settings → Privacy &amp; Security, allow Notch Monster under <strong>Accessibility</strong> and <strong>Screen &amp; System Audio Recording</strong> (called Screen Recording on some macOS versions). Accessibility lets it close the window; Screen Recording supplies the image for the eating animation.</p></li>
+<li><h2>Reopen and check</h2><p>Quit and reopen Notch Monster after granting access, including when macOS asks you to. In the app’s Settings, choose <strong>Check permissions again</strong> or <strong>Retry capture check</strong>. Wait for <strong>Ready to grab windows</strong>, then drag a window by its title bar toward the notch and release while grabbed.</p></li>
+</ol>
+<section class="troubleshooting" aria-labelledby="troubleshooting-title">
+<h2 id="troubleshooting-title">Still stuck?</h2>
+<details>
+<summary>The permission is on, but the app says it’s denied</summary>
+<p>An enabled switch can still refer to the previous build. Quit Notch Monster. In the affected Privacy &amp; Security pane, select its old entry and remove it with <strong>−</strong>. Use <strong>+</strong> to add <strong>/Applications/Notch Monster.app</strong> again, then enable it. Repeat for the other permission if needed. Reopen the app and retry the capture check.</p>
+<p>This interim build is ad hoc signed. Its identity changes when the binary changes, so an update can require these permissions again. The upcoming Developer ID release is intended to keep a stable signing identity.</p>
+</details>
+<details>
+<summary>The arm appears, but the window stays open</summary>
+<p>Check that Settings says <strong>Ready to grab windows</strong> and <strong>Let it close dragged windows</strong> is enabled. Release while the hand is holding the window. If the window asks you to save or refuses to close, it stays open. A wave near an empty pointer is just a wave.</p>
+<p>If Settings reports a temporary capture failure, try another window or choose <strong>Retry capture check</strong>. A temporary failure does not mean the permission was removed.</p>
+</details>
+<details>
+<summary>I can’t find Settings</summary>
+<p>Click Notch Monster in the Dock or open it from Applications again. The new version brings Settings to the front. You do not need to find its menu-bar icon.</p>
+</details>
+<p class="help-note">Files can still be dropped into the notch without the window permissions. Files go to Trash; windows get closed. <a href="https://github.com/mrjf/notch-monster/issues">Report a problem</a></p>
+</section>
+</div>
+</main>
+</body>
+</html>

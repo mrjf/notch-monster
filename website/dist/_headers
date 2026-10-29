@@ -3,7 +3,7 @@
   Referrer-Policy: strict-origin-when-cross-origin
   X-Frame-Options: SAMEORIGIN
 
-/assets/Notch-Monster-0.1.11.dmg
+/assets/Notch-Monster-0.1.12.dmg
   Content-Type: application/x-apple-diskimage
-  Content-Disposition: attachment; filename="Notch-Monster-0.1.11.dmg"
+  Content-Disposition: attachment; filename="Notch-Monster-0.1.12.dmg"
   Cache-Control: public, max-age=300

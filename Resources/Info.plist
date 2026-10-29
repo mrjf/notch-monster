@@ -8,10 +8,10 @@
     <key>CFBundleName</key><string>Notch Monster</string>
     <key>CFBundleIconFile</key><string>AppIcon</string>
     <key>CFBundlePackageType</key><string>APPL</string>
-    <key>CFBundleShortVersionString</key><string>0.1.11</string>
-    <key>CFBundleVersion</key><string>12</string>
+    <key>CFBundleShortVersionString</key><string>0.1.12</string>
+    <key>CFBundleVersion</key><string>13</string>
     <key>LSMinimumSystemVersion</key><string>15.0</string>
-    <key>LSUIElement</key><true/>
+    <key>LSUIElement</key><false/>
     <key>NSAccessibilityUsageDescription</key><string>Notch Monster closes windows you deliberately feed to the notch and asks the app to quit when its last window closes.</string>
     <key>NSAppleEventsUsageDescription</key><string>Notch Monster asks an app to quit when you feed its last open window to the notch.</string>
 </dict>
